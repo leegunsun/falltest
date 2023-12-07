@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "1080641144589",
+    "firebase_url": "https://dytest1-c7a86-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dytest1-c7a86",
+    "storage_bucket": "dytest1-c7a86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080641144589:android:02906cabd9074330e95244",
+        "android_client_info": {
+          "package_name": "com.example.dyt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7Hw2aYh4DC60yJJ5VB4ROYTvcavWjCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080641144589:android:6ba1bb4b6a4358ade95244",
+        "android_client_info": {
+          "package_name": "com.example.teata"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7Hw2aYh4DC60yJJ5VB4ROYTvcavWjCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080641144589:android:73acc09b377f26a4e95244",
+        "android_client_info": {
+          "package_name": "com.example.teatb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt7Hw2aYh4DC60yJJ5VB4ROYTvcavWjCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

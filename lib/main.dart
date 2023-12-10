@@ -42,7 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _launch = 'Unknown';
   var Ltext;
-
+  String testText = '';
+  TextEditingController tc = TextEditingController();
   void _isHCodeToggel() {
     setState(() {
       isHardCoding = !isHardCoding;
@@ -61,25 +62,20 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              GestureDetector(
-                  onTap: () async {
-                    var dy = await DynamiclinkService.instance.createDynamicLink();
-                    setState(() {
-                      Ltext = dy;
-                      print(Ltext);
-                      launchUrl(dy);
-                    });
-                  },
-                  child: Center(
-                    child: Text('${Ltext.toString()} 안녕하세요'),
-                  )),
-              Center(
-                  child: Text(hCodeUri,
-                      style: TextStyle(
-                          color: !isHardCoding ? Colors.grey : Colors.black))),
+              // Center(
+              //   child: Text('하드 코딩'),
+              // ),
+              ElevatedButton(onPressed: (){
+                setState(() {
+                });
+              }, child: Text('리프레쉬')),
+              // Center(
+              //     child: Text(hCodeUri,
+              //         style: TextStyle(
+              //             color: !isHardCoding ? Colors.grey : Colors.black))),
               Divider(),
               Center(
-                  child: Text('호출',
+                  child: Text('호출 숏링크',
                       style: TextStyle(
                           color: isHardCoding ? Colors.grey : Colors.black))),
               Center(
@@ -88,9 +84,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: isHardCoding ? Colors.grey : Colors.black))),
               Divider(),
               // Spacer(),
-              ElevatedButton(
-                  onPressed: _isHCodeToggel,
-                  child: Text('하드코딩 => $isHardCoding')),
+              // ElevatedButton(
+              //     onPressed: _isHCodeToggel,
+              //     child: Text('하드코딩 => $isHardCoding')),
               ElevatedButton(
                 onPressed: LaunchMode_platformDefault,
                 child: const Text(
@@ -121,14 +117,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   'LaunchMode_inAppBrowserView',
                 ),
               ),
-              ElevatedButton(
-                onPressed: CustomT,
-                child: const Text(
-                  'CustomT',
-                ),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  Text('설치 되는 앱에 보낼 데이터 =>'),
+                  Flexible(
+                    child: TextField(
+                      controller: tc,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                  '231208 현재 실행 안되고 있음 -> 시간이 경과 했을 때 [naver.com]으로 이동 되는지 확인해 봐야함')
+              // ElevatedButton(
+              //   onPressed: CustomT,
+              //   child: const Text(
+              //     'CustomT',
+              //   ),
+              // ),
+              // Text(
+              //     '231208 현재 실행 안되고 있음 -> 시간이 경과 했을 때 [naver.com]으로 이동 되는지 확인해 봐야함')
             ],
           ),
         ),
@@ -143,13 +150,15 @@ class _MyHomePageState extends State<MyHomePage> {
   dynamic defaultSetting() async {
     var deepLink;
 
+    testText = tc.text;
+
     if (isHardCoding) {
       deepLink = launchUrl(Uri.parse(hCodeUri));
     } else {
-      deepLink = await DynamiclinkService.instance.createDynamicLink();
+      deepLink = await DynamiclinkService.instance.createDynamicLink(testText);
       // _launch = testUri.toString();
     }
-
+    _launch = deepLink.toString();
     // _launch = deepLink.toString();
     return deepLink;
   }
@@ -198,10 +207,10 @@ class DynamiclinkService {
 
   static DynamiclinkService get instance => _singleton;
 
-  createDynamicLink() async {
+  createDynamicLink(String text) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://teatc.page.link',
-      link: Uri.parse('https://teatc.page.link/TestMessage_send_gunsun'),
+      link: Uri.parse('https://teatc.page.link/TestMessage_send_gunsun?text=$text'),
       androidParameters: AndroidParameters(
           packageName: 'com.gunsun1.testc',
           // fallbackUrl: Uri.parse('https://www.google.com')

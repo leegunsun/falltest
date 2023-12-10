@@ -41,6 +41,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   String _launch = 'Unknown';
+  var Ltext;
 
   void _isHCodeToggel() {
     setState(() {
@@ -60,14 +61,36 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Center(child: Text('하드 코딩', style: TextStyle(color: isHardCoding ? Colors.grey : Colors.black),),),
-              Center(child: Text(hCodeUri,  style: TextStyle(color: isHardCoding ? Colors.grey : Colors.black))),
+              GestureDetector(
+                  onTap: () async {
+                    var dy = await DynamiclinkService.instance.createDynamicLink();
+                    setState(() {
+                      Ltext = dy;
+                      print(Ltext);
+                      launchUrl(dy);
+                    });
+                  },
+                  child: Center(
+                    child: Text('${Ltext.toString()} 안녕하세요'),
+                  )),
+              Center(
+                  child: Text(hCodeUri,
+                      style: TextStyle(
+                          color: !isHardCoding ? Colors.grey : Colors.black))),
               Divider(),
-              Center(child: Text('호출', style: TextStyle(color: !isHardCoding ? Colors.grey : Colors.black))),
-              Center(child: Text('$_launch', style: TextStyle(color: !isHardCoding ? Colors.grey : Colors.black))),
+              Center(
+                  child: Text('호출',
+                      style: TextStyle(
+                          color: isHardCoding ? Colors.grey : Colors.black))),
+              Center(
+                  child: Text('$_launch',
+                      style: TextStyle(
+                          color: isHardCoding ? Colors.grey : Colors.black))),
               Divider(),
               // Spacer(),
-              ElevatedButton(onPressed: _isHCodeToggel, child: Text('하드코딩 => $isHardCoding')),
+              ElevatedButton(
+                  onPressed: _isHCodeToggel,
+                  child: Text('하드코딩 => $isHardCoding')),
               ElevatedButton(
                 onPressed: LaunchMode_platformDefault,
                 child: const Text(
@@ -98,7 +121,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   'LaunchMode_inAppBrowserView',
                 ),
               ),
-              Text('231208 현재 실행 안되고 있음 -> 시간이 경과 했을 때 [naver.com]으로 이동 되는지 확인해 봐야함')
+              ElevatedButton(
+                onPressed: CustomT,
+                child: const Text(
+                  'CustomT',
+                ),
+              ),
+              Text(
+                  '231208 현재 실행 안되고 있음 -> 시간이 경과 했을 때 [naver.com]으로 이동 되는지 확인해 봐야함')
             ],
           ),
         ),
@@ -106,21 +136,22 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  String hCodeUri = 'https://teata.page.link/?link=https://teata.page.link&apn=com.example.teatb&afl=https://www.naver.com';
+  String hCodeUri =
+      'https://teata.page.link/?link=https://teata.page.link&apn=com.example.teatb&afl=https://www.naver.com';
   bool isHardCoding = false;
 
   dynamic defaultSetting() async {
-    var testUri;
+    var deepLink;
 
     if (isHardCoding) {
-      testUri = launchUrl(Uri.parse(hCodeUri));
+      deepLink = launchUrl(Uri.parse(hCodeUri));
     } else {
-      testUri = await DynamiclinkService.instance.createDynamicLink('test');
-      _launch = testUri.toString();
+      deepLink = await DynamiclinkService.instance.createDynamicLink();
+      // _launch = testUri.toString();
     }
 
-    print(testUri);
-    return testUri;
+    // _launch = deepLink.toString();
+    return deepLink;
   }
 
   LaunchMode_platformDefault() async {
@@ -152,6 +183,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     launchUrl(testUri, mode: LaunchMode.inAppBrowserView);
   }
+
+  CustomT() async {
+    var testUri = Uri.parse('https://teata.page.link/u9DC');
+
+    launchUrl(testUri, mode: LaunchMode.inAppBrowserView);
+  }
 }
 
 class DynamiclinkService {
@@ -161,25 +198,98 @@ class DynamiclinkService {
 
   static DynamiclinkService get instance => _singleton;
 
-  createDynamicLink(String text) async {
-    final dynamicLinkParams = DynamicLinkParameters(
-        link: Uri.parse('https://teata.page.link'),
-        uriPrefix: 'https://teata.page.link',
-        androidParameters: AndroidParameters(
-          packageName: 'com.example.teatb',
-          fallbackUrl: Uri.parse('https://www.naver.com'), // Fallback URL
-          // minimumVersion: 125,
+  createDynamicLink() async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://teatc.page.link',
+      link: Uri.parse('https://teatc.page.link/TestMessage_send_gunsun'),
+      androidParameters: AndroidParameters(
+          packageName: 'com.gunsun1.testc',
+          // fallbackUrl: Uri.parse('https://www.google.com')
+          ),
+      iosParameters: IOSParameters(
+          bundleId: 'com.gunsun1.testc',
+          // fallbackUrl: Uri.parse('https://www.google.com')
         ),
-        iosParameters: IOSParameters(
-            bundleId: 'com.example.deeplink',
-            fallbackUrl: Uri.parse('https://www.naver.com')));
+      // 나머지 매개변수는 필요에 따라 추가
+    );
 
-    final Uri dynamicLink = await FirebaseDynamicLinks.instance.buildLink(dynamicLinkParams);
+    final dynamicUrl = await FirebaseDynamicLinks.instance.buildShortLink(parameters);
 
-    // final dynamicLink = await dynamicLinkParams.longDynamicLink;
+    print(dynamicUrl);
 
-    print(dynamicLink);
-    // print('${dynamicLink.shortUrl}');
-    return dynamicLink;
+    return dynamicUrl.shortUrl;
   }
+
+  _() async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      uriPrefix: 'https://teatb.page.link',
+      link: Uri.parse('https://teatb.page.link/'),
+      androidParameters: AndroidParameters(
+          packageName: 'com.example.teata',
+          fallbackUrl: Uri.parse('https://www.naver.com')),
+      iosParameters: IOSParameters(
+          bundleId: 'com.example.teata',
+          fallbackUrl: Uri.parse('https://www.naver.com')),
+      // 나머지 매개변수는 필요에 따라 추가
+    );
+
+    final dynamicUrl =
+    await FirebaseDynamicLinks.instance.buildShortLink(parameters);
+
+    print(dynamicUrl);
+
+    return dynamicUrl.shortUrl;
+  }
+
+  //
+  // test2() async {
+  //   final dynamicLinkParams = DynamicLinkParameters(
+  //       link: Uri.parse('https://teata.page.link'),
+  //       // longDynamicLink: Uri.parse(
+  //       //   'https://teata.page.link?apn=com.example.teatb&imv=0&amv=0&link=https%3A%2F%2Fteata%2Fpage&afl=https://www.naver.com',
+  //       // ),
+  //       uriPrefix: 'https://teata.page.link',
+  //       androidParameters: AndroidParameters(
+  //         packageName: 'com.example.teatb',
+  //         fallbackUrl: Uri.parse('https://www.naver.com'),
+  //         // minimumVersion: 125,
+  //       ),
+  //       iosParameters: IOSParameters(
+  //           bundleId: 'com.example.deeplink',
+  //           fallbackUrl: Uri.parse('https://www.naver.com')));
+  //
+  //   final ShortDynamicLink shortLink =
+  //       await FirebaseDynamicLinks.instance.buildShortLink(dynamicLinkParams);
+  //   // final Uri dynamicLink = await FirebaseDynamicLinks.instance.buildLink(dynamicLinkParams);
+  //
+  //   // final dynamicLink = await dynamicLinkParams.longDynamicLink;
+  //
+  //   print(shortLink);
+  //   // print('${dynamicLink.shortUrl}');
+  //   return shortLink;
+  // }
+  //
+  // test() async {
+  //   final DynamicLinkParameters parameters = DynamicLinkParameters(
+  //     uriPrefix: 'https://teata.page.link',
+  //     longDynamicLink: Uri.parse(
+  //       'https://teata.page.link/u9DC?efr=0&ibi=com.example.teatb&apn=com.example.teatb&imv=0&amv=0&link=https%3A%2F%2Fexample%2Fhelloworld&ofl=https://www.naver.com',
+  //     ),
+  //     link: Uri.parse('https://teata.page.link'),
+  //     androidParameters: const AndroidParameters(
+  //       packageName: 'com.example.teatb',
+  //       minimumVersion: 0,
+  //     ),
+  //     iosParameters: const IOSParameters(
+  //       bundleId: 'com.example.teatb',
+  //       minimumVersion: '0',
+  //     ),
+  //   );
+  //
+  //   Uri url;
+  //
+  //   url = await FirebaseDynamicLinks.instance.buildLink(parameters);
+  //   print(url);
+  //   return url;
+  // }
 }

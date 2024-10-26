@@ -38,6 +38,9 @@ dependencies:
   firebase_core: ^2.24.1
   firebase_dynamic_links: ^5.4.7
   url_launcher: ^6.2.1
+  flutter_dotenv: ^5.2.1
+  webview_flutter: ^4.10.0
+  flutter_inappwebview: ^6.1.5
 
 dev_dependencies:
   flutter_test:
@@ -62,9 +65,11 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - .env
+    - assets/web/
+#     - images/a_dot_burr.jpeg
+#     - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

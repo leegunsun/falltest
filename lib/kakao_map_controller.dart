@@ -99,7 +99,7 @@ class KakaoMapController {
       return categoryName.contains("노래");
     }).toList();
 
-    return _dataList;
+    return filteredData;
   }
 
   Future<List<LatLng>> findShortCoinNore(LatLng userPoint, LatLng destinationPoint) async {

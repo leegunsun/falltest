@@ -48,20 +48,32 @@ class LocationService extends GetxService {
 
     // 현재 위치 가져오기
     // 새로운 방식 (LocationSettings 사용)
-    Position position = await Geolocator.getCurrentPosition(
+    // Position position = await Geolocator.getCurrentPosition(
+    //   locationSettings: const LocationSettings(
+    //     accuracy: LocationAccuracy.best,
+    //   ),
+    // );
+
+    _trackUserLocation();
+
+  }
+
+  void _trackUserLocation() {
+    // 위치 변경 시마다 스트림을 통해 위치 정보 제공
+    Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 2, // 2미터 단위로 위치 갱신
       ),
-    );
-
-
-    if(kDebugMode) {
-      print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
-      userLatLng = LatLng(defaultLatitude, defaultLongitude);
-    } else {
-      print('위도: ${position.latitude}, 경도: ${position.longitude}');
-      userLatLng = LatLng(position.latitude, position.longitude);
-    }
+    ).listen((Position position) {
+      if(kDebugMode) {
+        print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
+        userLatLng = LatLng(defaultLatitude, defaultLongitude);
+      } else {
+        print('위도: ${position.latitude}, 경도: ${position.longitude}');
+        userLatLng = LatLng(position.latitude, position.longitude);
+      }
+    });
   }
 
   static Decimal _sqrt(Decimal value, {Decimal? epsilon}) {

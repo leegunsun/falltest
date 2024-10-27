@@ -16,9 +16,12 @@
                 kakaoScript.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${window.appkey}&autoload=false`;
                 kakaoScript.onload = function() {
                     kakao.maps.load(function() {
-                        if (typeof window.onload === "function") {
-                            // `kakaomap.js` 파일의 `window.onload` 실행
-                            window.onload();
+                        if (typeof window.initMap === "function") {
+                            // `kakaomap.js` 파일의 `initMap` 함수 실행
+                            console.log(`window.userlatitude: ${window.userlatitude}`);
+                            console.log(`window.userlongitude: ${window.userlongitude}`);
+                            console.log(`window.userzoom: ${window.userzoom}`);
+                            window.initMap(window.userlatitude, window.userlongitude, window.userzoom);
                         }
                     });
                 };

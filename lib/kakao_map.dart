@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:dyt/geolocator_options.dart';
 import 'package:dyt/polygon.dart';
 import 'package:dyt/polyline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -43,21 +45,7 @@ class KakaoMap extends StatefulWidget {
 
 class _KakaoMapState extends State<KakaoMap> {
   late final KakaoMapController _mapController;
-  String htmlContent = '';
-  String appKey = dotenv.get("KAKAO_API_KEY");
-
-  @override
-  void initState() {
-    super.initState();
-    _loadHtmlFromAssets();
-  }
-
-  _loadHtmlFromAssets() async {
-    String fileHtmlContents = await rootBundle.loadString('assets/web/kakaomap.html');
-    setState(() {
-      htmlContent = fileHtmlContents.replaceAll('{appkey}', appKey);
-    });
-  }
+  var userLocation = Get.find<LocationService>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +53,6 @@ class _KakaoMapState extends State<KakaoMap> {
       initialUrlRequest: URLRequest(
         url: WebUri('http://localhost:8080/'),
       ),
-        // initialData: InAppWebViewInitialData(data: htmlContent) ,
       initialFile: "assets/web/kakaomap.html",
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
@@ -80,6 +67,9 @@ class _KakaoMapState extends State<KakaoMap> {
         // 페이지 로드 후 appkey 설정
         await controller.evaluateJavascript(source: """
       window.appkey = "${dotenv.env['KAKAO_API_KEY']}";
+      window.userlatitude = "${userLocation.userLatLng?.latitude}";
+      window.userlongitude = "${userLocation.userLatLng?.longitude}";
+      window.userzoom = "${3}";
       if (window.loadKakaoMap) {
         window.loadKakaoMap();
       }

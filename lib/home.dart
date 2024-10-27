@@ -76,7 +76,6 @@ class _HomeState extends State<Home> {
                         fitBounds([...list, ...list2]);
                       });
 
-
                     },
                   ),
                   ElevatedButton(

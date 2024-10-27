@@ -1,8 +1,10 @@
+import 'package:dyt/geolocator_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'firebase_options.dart';
@@ -13,6 +15,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await server.start();
   await dotenv.load();
+  // LocationService의 initService가 완료될 때까지 대기
+  await Get.putAsync(() async {
+    final locationService = LocationService();
+    await locationService.initService();
+    return locationService;
+  });
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

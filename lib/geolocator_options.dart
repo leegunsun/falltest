@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:decimal/decimal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -59,6 +62,61 @@ class LocationService extends GetxService {
       print('위도: ${position.latitude}, 경도: ${position.longitude}');
       userLatLng = LatLng(position.latitude, position.longitude);
     }
+  }
+
+  static Decimal _sqrt(Decimal value, {Decimal? epsilon}) {
+    // 초기값 설정
+    double x0 = value.toDouble() / 2;
+    double x1 = (x0 + value.toDouble() / x0) / 2;
+
+    // epsilon 값이 없을 경우 기본값 설정
+    epsilon ??= Decimal.parse('0.0001');
+
+    int maxIterations = 100; // 최대 반복 횟수 설정
+    int iteration = 0;
+
+    // 반복하여 제곱근 근사값 계산
+    while ((x0 - x1).abs() > epsilon.toDouble() && iteration < maxIterations) {
+      x0 = x1;
+      x1 = (x0 + value.toDouble() / x0) / 2;
+      iteration++;
+    }
+
+    // 최종 결과를 Decimal로 변환하여 반환
+    return Decimal.parse(x1.toString());
+  }
+
+
+// 거리 계산 함수
+  static Decimal _calculateDistance(LatLng a, LatLng b) {
+    final latDiff = Decimal.parse(a.latitude.toString()) - Decimal.parse(b.latitude.toString());
+    final lonDiff = Decimal.parse(a.longitude.toString()) - Decimal.parse(b.longitude.toString());
+
+    // 제곱 연산
+    final Decimal latDiffSquared = latDiff * latDiff;
+    final Decimal lonDiffSquared = lonDiff * lonDiff;
+
+    // 두 값의 합을 계산
+    final Decimal sum = latDiffSquared + lonDiffSquared;
+
+    // 사용자 정의 _sqrt 함수로 제곱근 계산
+    return _sqrt(sum);
+  }
+
+// 가장 가까운 좌표 찾기 함수
+  static LatLng findClosestPoint(LatLng myLocation, List<LatLng> points) {
+    LatLng closestPoint = points[0];
+    Decimal minDistance = _calculateDistance(myLocation, closestPoint);
+
+    for (var point in points) {
+      Decimal distance = _calculateDistance(myLocation, point);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestPoint = point;
+      }
+    }
+
+    return closestPoint;
   }
 }
 

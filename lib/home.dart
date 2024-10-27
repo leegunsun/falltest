@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:dyt/polygon.dart';
 import 'package:dyt/polyline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'circle.dart';
+import 'geolocator_options.dart';
 import 'kakao_map.dart';
 import 'kakao_map_controller.dart';
 import 'marker.dart';
@@ -20,6 +23,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   KakaoMapController? _kakaoMapController;
+  var userLocation = Get.find<LocationService>();
 
   Set<Polyline> polylines = {};
   Set<Circle> circles = {};
@@ -61,88 +65,259 @@ class _HomeState extends State<Home> {
             child: SafeArea(
               child: Row(
                 children: [
-                  ElevatedButton(
-                    child: const Text('직선'),
-                    onPressed: () async {
-                      _clear();
-
-                      List<LatLng> list = [LatLng(37.3625806, 126.9248464), LatLng(37.3626138, 126.9264801), LatLng(37.3632727, 126.9280313)];
-                      List<LatLng> list2 = [LatLng(37.3616144, 126.9250364), LatLng(37.3614955, 126.9286686), LatLng(37.3608681, 126.9306506), LatLng(37.3594222, 126.9280014)];
-
-                      setState(() {
-                        polylines.add(Polyline(polylineId: "1", points: list, strokeColor: Colors.red, strokeOpacity: 0.7, strokeWidth: 8));
-                        polylines.add(Polyline(polylineId: "2", points: list2, strokeColor: Colors.blue, strokeOpacity: 1, strokeWidth: 4));
-
-                        fitBounds([...list, ...list2]);
-                      });
-
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('원'),
-                    onPressed: () {
-                      LatLng center = LatLng(37.3616144, 126.9250364);
-                      setState(() {
-                        circles.add(Circle(circleId: "3", center: center, radius: 44, strokeColor: Colors.amber, strokeOpacity: 1, strokeWidth: 4));
-
-                        fitBounds([center]);
-                      });
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('다각형'),
-                    onPressed: () async {
-                      _clear();
-
-                      List<LatLng> list = [LatLng(37.3625806, 126.9248464), LatLng(37.3626138, 126.9264801), LatLng(37.3632727, 126.9280313)];
-                      List<LatLng> list2 = [LatLng(37.3616144, 126.9250364), LatLng(37.3614955, 126.9286686), LatLng(37.3608681, 126.9306506), LatLng(37.3594222, 126.9280014)];
-
-                      setState(() {
-                        polygons.add(Polygon(polygonId: "4", points: list, strokeWidth: 4, strokeColor: Colors.blue, strokeOpacity: 1, fillColor: Colors.transparent, fillOpacity: 0));
-                        polygons.add(Polygon(polygonId: "5", points: list2, strokeWidth: 4, strokeColor: Colors.blue, strokeOpacity: 1, fillColor: Colors.transparent, fillOpacity: 0));
-
-                        fitBounds([...list, ...list2]);
-                      });
-                    },
-                  ),
-                  ElevatedButton(
-                    child: const Text('다각형-반전'),
-                    onPressed: () async {
-                      _clear();
-
-                      List<LatLng> list = [LatLng(37.3625806, 126.9248464), LatLng(37.3626138, 126.9264801), LatLng(37.3632727, 126.9280313)];
-                      List<LatLng> list2 = [LatLng(37.3616144, 126.9250364), LatLng(37.3614955, 126.9286686), LatLng(37.3608681, 126.9306506), LatLng(37.3594222, 126.9280014)];
-
-                      setState(() {
-                        polygons.add(Polygon(
-                          polygonId: "6",
-                          points: createOuterBounds(),
-                          holes: [list, list2],
-                          strokeWidth: 4,
-                          strokeColor: Colors.blue,
-                          strokeOpacity: 0.7,
-                          fillColor: Colors.black,
-                          fillOpacity: 0.5,
-                        ));
-
-                        fitBounds([...list, ...list2]);
-                      });
-                    },
-                  ),
+                  // ElevatedButton(
+                  //   child: const Text('직선'),
+                  //   onPressed: () async {
+                  //     _clear();
+                  //
+                  //     List<LatLng> list = [
+                  //       LatLng(37.3625806, 126.9248464),
+                  //       LatLng(37.3626138, 126.9264801),
+                  //       LatLng(37.3632727, 126.9280313)
+                  //     ];
+                  //     List<LatLng> list2 = [
+                  //       LatLng(37.3616144, 126.9250364),
+                  //       LatLng(37.3614955, 126.9286686),
+                  //       LatLng(37.3608681, 126.9306506),
+                  //       LatLng(37.3594222, 126.9280014)
+                  //     ];
+                  //
+                  //     setState(() {
+                  //       polylines.add(Polyline(
+                  //           polylineId: "1",
+                  //           points: list,
+                  //           strokeColor: Colors.red,
+                  //           strokeOpacity: 0.7,
+                  //           strokeWidth: 8));
+                  //       polylines.add(Polyline(
+                  //           polylineId: "2",
+                  //           points: list2,
+                  //           strokeColor: Colors.blue,
+                  //           strokeOpacity: 1,
+                  //           strokeWidth: 4));
+                  //
+                  //       fitBounds([...list, ...list2]);
+                  //     });
+                  //   },
+                  // ),
+                  // ElevatedButton(
+                  //   child: const Text('원'),
+                  //   onPressed: () {
+                  //     LatLng? center = userLocation.userLatLng;
+                  //     if (center != null) {
+                  //       setState(() {
+                  //         circles.add(Circle(
+                  //             circleId: "3",
+                  //             center: center,
+                  //             radius: 44,
+                  //             strokeColor: Colors.amber,
+                  //             strokeOpacity: 1,
+                  //             strokeWidth: 4));
+                  //
+                  //         fitBounds([center]);
+                  //       });
+                  //     }
+                  //   },
+                  // ),
+                  // ElevatedButton(
+                  //   child: const Text('원-반전'),
+                  //   onPressed: () {
+                  //     LatLng? center = userLocation.userLatLng;
+                  //     if (center != null) {
+                  //       setState(() {
+                  //         circles.add(Circle(
+                  //           circleId: "7",
+                  //           center: center,
+                  //           radius: 44,
+                  //           strokeWidth: 4,
+                  //           strokeColor: Colors.blue,
+                  //           strokeOpacity: 0.7,
+                  //           fillColor: Colors.black,
+                  //           fillOpacity: 0.5,
+                  //         ));
+                  //
+                  //         fitBounds([center]);
+                  //       });
+                  //     }
+                  //   },
+                  // ),
+                  // ElevatedButton(
+                  //   child: const Text('다각형'),
+                  //   onPressed: () async {
+                  //     _clear();
+                  //
+                  //     List<LatLng> list = [
+                  //       LatLng(37.3625806, 126.9248464),
+                  //       LatLng(37.3626138, 126.9264801),
+                  //       LatLng(37.3632727, 126.9280313)
+                  //     ];
+                  //     List<LatLng> list2 = [
+                  //       LatLng(37.3616144, 126.9250364),
+                  //       LatLng(37.3614955, 126.9286686),
+                  //       LatLng(37.3608681, 126.9306506),
+                  //       LatLng(37.3594222, 126.9280014)
+                  //     ];
+                  //
+                  //     setState(() {
+                  //       polygons.add(Polygon(
+                  //           polygonId: "4",
+                  //           points: list,
+                  //           strokeWidth: 4,
+                  //           strokeColor: Colors.blue,
+                  //           strokeOpacity: 1,
+                  //           fillColor: Colors.transparent,
+                  //           fillOpacity: 0));
+                  //       polygons.add(Polygon(
+                  //           polygonId: "5",
+                  //           points: list2,
+                  //           strokeWidth: 4,
+                  //           strokeColor: Colors.blue,
+                  //           strokeOpacity: 1,
+                  //           fillColor: Colors.transparent,
+                  //           fillOpacity: 0));
+                  //
+                  //       fitBounds([...list, ...list2]);
+                  //     });
+                  //   },
+                  // ),
+                  // ElevatedButton(
+                  //   child: const Text('다각형-반전'),
+                  //   onPressed: () async {
+                  //     _clear();
+                  //
+                  //     List<LatLng> list = [
+                  //       LatLng(37.3625806, 126.9248464),
+                  //       LatLng(37.3626138, 126.9264801),
+                  //       LatLng(37.3632727, 126.9280313)
+                  //     ];
+                  //     List<LatLng> list2 = [
+                  //       LatLng(37.3616144, 126.9250364),
+                  //       LatLng(37.3614955, 126.9286686),
+                  //       LatLng(37.3608681, 126.9306506),
+                  //       LatLng(37.3594222, 126.9280014)
+                  //     ];
+                  //
+                  //     setState(() {
+                  //       polygons.add(Polygon(
+                  //         polygonId: "6",
+                  //         points: createOuterBounds(),
+                  //         holes: [list, list2],
+                  //         strokeWidth: 4,
+                  //         strokeColor: Colors.blue,
+                  //         strokeOpacity: 0.7,
+                  //         fillColor: Colors.black,
+                  //         fillOpacity: 0.5,
+                  //       ));
+                  //
+                  //       fitBounds([...list, ...list2]);
+                  //     });
+                  //   },
+                  // ),
                   ElevatedButton(
                     child: const Text('마커'),
-                    onPressed: () {
+                    onPressed: () async {
                       _clear();
 
-                      LatLng latLng = LatLng(37.3625806, 126.9248464);
-                      LatLng latLng2 = LatLng(37.3605008, 126.9252204);
+                      List<Map<String,
+                          dynamic>>? _result = await _kakaoMapController
+                          ?.getCoinNore(userLocation.userLatLng!);
+
+                      if (_result == null) return;
+
+                      for (var item in _result) {
+
+                        LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+                        // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+                        markers.add(Marker(markerId: item["id"],
+                            latLng: _latlng,
+                            infoWindowText: item["place_name"],
+                            markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+                        // bounds.add(_latlng);
+
+                      }
+
+                      // LatLng latLng = LatLng(37.3625806, 126.9248464);
+                      // LatLng latLng2 = LatLng(37.3605008, 126.9252204);
+                      // markers.add(Marker(markerId: "7", latLng: latLng, markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', infoWindowText: 'TEST1'));
+                      // markers.add(Marker(markerId: "8", latLng: latLng2, markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png', infoWindowText: 'TEST2'));
+
+
+                      List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
+                      setState(() {
+                        fitBounds(bounds2);
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    child: const Text('최단거리??'),
+                    onPressed: () async {
+                      _clear();
+
+                      List<Map<String,
+                          dynamic>>? _result = await _kakaoMapController
+                          ?.getCoinNore(userLocation.userLatLng!);
+
+                      if (_result == null) return;
+                      List<LatLng> bounds2 = [];
+                      for (var item in _result) {
+                        LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+                        // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+                        markers.add(Marker(markerId: item["id"],
+                            latLng: _latlng,
+                            infoWindowText: item["place_name"],
+                            markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+                        bounds2.add(_latlng);
+                      }
+
+                      LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
 
                       setState(() {
-                        markers.add(Marker(markerId: "7", latLng: latLng, markerImageSrc: 'assets/web/marker.png', infoWindowText: 'TEST1'));
-                        markers.add(Marker(markerId: "8", latLng: latLng2, markerImageSrc: 'assets/web/marker.png', infoWindowText: 'TEST2'));
-
-                        fitBounds([latLng, latLng2]);
+                        fitBounds([closestPoint]);
                       });
+                    },
+                  ),
+                  ElevatedButton(
+                    child: const Text('길찾기'),
+                    onPressed: () async {
+                      _clear();
+
+                      List<Map<String,
+                          dynamic>>? _result2 = await _kakaoMapController
+                          ?.getCoinNore(userLocation.userLatLng!);
+
+                      if (_result2 == null) return;
+                      List<LatLng> bounds2 = [];
+                      for (var item in _result2) {
+                        LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+                        // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+                        markers.add(Marker(markerId: item["id"],
+                            latLng: _latlng,
+                            infoWindowText: item["place_name"],
+                            markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+                        bounds2.add(_latlng);
+                      }
+
+                      LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+
+
+                      List<LatLng>? _result = await _kakaoMapController
+                          ?.findShortCoinNore(userLocation.userLatLng!, closestPoint);
+
+                      if (_result == null) return;
+
+                          setState(() {
+                            polylines.add(Polyline(
+                                polylineId: "1",
+                                points: _result,
+                                strokeColor: Colors.red,
+                                strokeOpacity: 0.7,
+                                strokeWidth: 8));
+
+                            fitBounds(_result);
+                          });
                     },
                   ),
                 ],
@@ -183,5 +358,4 @@ class _HomeState extends State<Home> {
   fitBounds(List<LatLng> bounds) async {
     _kakaoMapController?.fitBounds(bounds);
   }
-
 }

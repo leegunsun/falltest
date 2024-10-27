@@ -58,8 +58,7 @@ class _KakaoMapState extends State<KakaoMap> {
         javaScriptEnabled: true,
         // 필요시 다른 설정을 추가하세요.
       ),
-      onWebViewCreated: (InAppWebViewController controller) async {
-      },
+      onWebViewCreated: (InAppWebViewController controller) async {},
       onLoadStop: (InAppWebViewController controller, url) async {
         _mapController = KakaoMapController(controller);
         if (widget.onMapCreated != null) widget.onMapCreated!(_mapController);

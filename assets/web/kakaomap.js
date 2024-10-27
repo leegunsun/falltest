@@ -289,16 +289,20 @@ function panTo(latitude, longitude) {
 }
 
 function fitBounds(points) {
-  let list = JSON.parse(points);
+  if (map === null) {
+    console.error("Map is not initialized.");
+    return;
+  }
 
+  let list = JSON.parse(points);
   let bounds = new kakao.maps.LatLngBounds();
   for (let i = 0; i < list.length; i++) {
-    // LatLngBounds 객체에 좌표를 추가합니다
     bounds.extend(new kakao.maps.LatLng(list[i].latitude, list[i].longitude));
   }
 
   map.setBounds(bounds);
 }
+
 
 window.initMap = function (latitude, longitude, zoomLevel) {
   let container = document.getElementById("map");
@@ -316,7 +320,7 @@ window.initMap = function (latitude, longitude, zoomLevel) {
     level: zoomLevel !== null && zoomLevel !== undefined ? zoomLevel : defaultZoomLevel,
   };
 
-  let map = new kakao.maps.Map(container, options);
+  map = new kakao.maps.Map(container, options);
 
   // 지도 이벤트 리스너 등록 등 추가 로직
   kakao.maps.event.addListener(map, "dragstart", function () {
@@ -382,43 +386,3 @@ const empty = (value) => {
     return true; // new String
   return false;
 };
-
-//var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-//    mapOption = {
-//        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-//        level: 3 // 지도의 확대 레벨
-//    };
-//
-//// 지도를 생성합니다
-//var map = new kakao.maps.Map(mapContainer, mapOption);
-//
-//// 장소 검색 객체를 생성합니다
-//var ps = new kakao.maps.services.Places(map);
-//
-//// 카테고리로 은행을 검색합니다
-//ps.categorySearch('BK9', placesSearchCB, {useMapBounds:true});
-//
-//// 키워드 검색 완료 시 호출되는 콜백함수 입니다
-//function placesSearchCB (data, status, pagination) {
-//    if (status === kakao.maps.services.Status.OK) {
-//        for (var i=0; i<data.length; i++) {
-//            displayMarker(data[i]);
-//        }
-//    }
-//}
-//
-//// 지도에 마커를 표시하는 함수입니다
-//function displayMarker(place) {
-//    // 마커를 생성하고 지도에 표시합니다
-//    var marker = new kakao.maps.Marker({
-//        map: map,
-//        position: new kakao.maps.LatLng(place.y, place.x)
-//    });
-//
-//    // 마커에 클릭이벤트를 등록합니다
-//    kakao.maps.event.addListener(marker, 'click', function() {
-//        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-//        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>');
-//        infowindow.open(map, marker);
-//    });
-//}

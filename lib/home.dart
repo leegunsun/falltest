@@ -30,6 +30,114 @@ class _HomeState extends State<Home> {
   Set<Polygon> polygons = {};
   Set<Marker> markers = {};
 
+  Future<void> _initMethod () async {
+    LatLng? _test1 = await _1();
+    List<LatLng>? _test2 = await _2();
+    LatLng? _test3 = await _3();
+    List<LatLng>? _test4 = await _4();
+
+    if(_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
+      fitBounds([_test1, ..._test2, _test3, ..._test4]);
+    }
+    // fitBounds([..._test4!]);
+    setState(() {});
+  }
+
+  Future<LatLng?> _1 () async {
+    LatLng? center = userLocation.userLatLng;
+    if (center != null) {
+        circles.add(Circle(
+            circleId: "3",
+            center: center,
+            radius: 1000,
+            strokeColor: Colors.redAccent,
+            strokeOpacity: 1,
+            strokeWidth: 4));
+      return center;
+    }
+    return null;
+  }
+
+  Future<List<LatLng>?> _2 () async {
+    List<Map<String,
+        dynamic>>? _result = await _kakaoMapController
+        ?.getCoinNore(userLocation.userLatLng!);
+
+    if (_result == null) return null;
+
+    for (var item in _result) {
+
+      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+      markers.add(Marker(markerId: item["id"],
+          latLng: _latlng,
+          infoWindowText: item["place_name"],
+          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+    }
+
+    List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
+  return bounds2;
+  }
+
+  Future<LatLng?> _3 () async {
+    List<Map<String,
+        dynamic>>? _result = await _kakaoMapController
+        ?.getCoinNore(userLocation.userLatLng!);
+
+    if (_result == null) return null;
+    List<LatLng> bounds2 = [];
+    for (var item in _result) {
+      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+      markers.add(Marker(markerId: item["id"],
+          latLng: _latlng,
+          infoWindowText: item["place_name"],
+          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+      bounds2.add(_latlng);
+    }
+
+    LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+
+    return closestPoint;
+  }
+
+  Future<List<LatLng>?> _4() async {
+    List<Map<String,
+        dynamic>>? _result2 = await _kakaoMapController
+        ?.getCoinNore(userLocation.userLatLng!);
+
+    if (_result2 == null) return null;
+    List<LatLng> bounds2 = [];
+    for (var item in _result2) {
+      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+      markers.add(Marker(markerId: item["id"],
+          latLng: _latlng,
+          infoWindowText: item["place_name"],
+          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+      bounds2.add(_latlng);
+    }
+
+    LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+
+    List<LatLng>? _result = await _kakaoMapController
+        ?.findShortCoinNore(userLocation.userLatLng!, closestPoint);
+
+    if (_result == null) return null;
+
+    polylines.add(Polyline(
+        polylineId: "1",
+        points: _result,
+        strokeColor: Colors.blueAccent,
+        strokeOpacity: 0.7,
+        strokeWidth: 8));
+
+   return _result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +146,7 @@ class _HomeState extends State<Home> {
           KakaoMap(
             onMapCreated: (KakaoMapController controller) {
               _kakaoMapController = controller;
+              _initMethod();
             },
             onMapTap: (LatLng latLng) {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -100,25 +209,25 @@ class _HomeState extends State<Home> {
                   //     });
                   //   },
                   // ),
-                  // ElevatedButton(
-                  //   child: const Text('원'),
-                  //   onPressed: () {
-                  //     LatLng? center = userLocation.userLatLng;
-                  //     if (center != null) {
-                  //       setState(() {
-                  //         circles.add(Circle(
-                  //             circleId: "3",
-                  //             center: center,
-                  //             radius: 44,
-                  //             strokeColor: Colors.amber,
-                  //             strokeOpacity: 1,
-                  //             strokeWidth: 4));
-                  //
-                  //         fitBounds([center]);
-                  //       });
-                  //     }
-                  //   },
-                  // ),
+                  ElevatedButton(
+                    child: const Text('원'),
+                    onPressed: () {
+                      LatLng? center = userLocation.userLatLng;
+                      if (center != null) {
+                        setState(() {
+                          circles.add(Circle(
+                              circleId: "3",
+                              center: center,
+                              radius: 1000,
+                              strokeColor: Colors.amber,
+                              strokeOpacity: 1,
+                              strokeWidth: 4));
+
+                          fitBounds([center]);
+                        });
+                      }
+                    },
+                  ),
                   // ElevatedButton(
                   //   child: const Text('원-반전'),
                   //   onPressed: () {

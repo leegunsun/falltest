@@ -2,6 +2,7 @@ import 'package:dyt/geolocator_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -21,10 +22,14 @@ void main() async {
     await locationService.initService();
     return locationService;
   });
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  // Hide the status bar and navigation bar
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
   runApp(const MyApp());
+
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarIconBrightness: Brightness.dark,));
 }
 
 class MyApp extends StatelessWidget {
@@ -55,15 +60,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // This allows the body to extend behind the app bar and status bar
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
-        title: Text(widget.title),
+        title: Container(
+            decoration: BoxDecoration(),
+            child: Text(widget.title)),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent, // 상태 표시줄 배경색을 투명으로 설정
+          statusBarIconBrightness: Brightness.dark, // 아이콘 색상을 검정색으로 설정
+        ),
       ),
-      body: const Home(),
+      // Remove padding caused by the status bar
+      body: const Home()
     );
   }
 }

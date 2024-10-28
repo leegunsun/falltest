@@ -5,21 +5,34 @@ import 'package:dyt/hex_color.dart';
 
 import 'package:dyt/polygon.dart';
 import 'package:dyt/polyline.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as usedDio;
 
 import 'circle.dart';
+import 'geolocator_options.dart';
 import 'marker.dart';
 import 'model/lat_lng.dart';
 
-class KakaoMapController {
+class KakaoMapController extends GetxController {
   final InAppWebViewController _webViewController;
+  InAppWebViewController get webViewController => _webViewController;
+  KakaoMapController(this._webViewController);
+
   List<Map<String, dynamic>> findAllStore = [];
   Map<String, dynamic>? selectStore;
 
-  final Dio _dio = Dio(BaseOptions(
+  var userLocation = Get.find<LocationService>();
+
+  Set<Polyline> polylines = {};
+  Set<Circle> circles = {};
+  Set<Polygon> polygons = {};
+  Set<Marker> markers = {};
+
+  final usedDio.Dio _dio = usedDio.Dio(usedDio.BaseOptions(
     baseUrl: "https://dapi.kakao.com/v2",
     headers: {
       "Authorization": dotenv.get("KAKAO_API_MASTER_KEY", fallback: ""),
@@ -27,17 +40,13 @@ class KakaoMapController {
     },
   ));
 
-  final Dio _dioTMap = Dio(BaseOptions(
+  final usedDio.Dio _dioTMap = usedDio.Dio(usedDio.BaseOptions(
     baseUrl: "https://apis.openapi.sk.com",
     headers: {
       "appKey": dotenv.get("TMAP_API_MASTER_KEY", fallback: ""),
       "content-type": "application/x-www-form-urlencoded" // 여기 추가
     },
   ));
-
-  InAppWebViewController get webViewController => _webViewController;
-
-  KakaoMapController(this._webViewController);
 
   addPolyline({Set<Polyline>? polylines}) async {
     if (polylines != null) {
@@ -85,7 +94,7 @@ class KakaoMapController {
 
   Future<List<Map<String, dynamic>>> getCoinNore(LatLng points,
       [String? radius]) async {
-    Response<dynamic> _getData =
+    usedDio.Response<dynamic> _getData =
         await _dio.get("/local/search/keyword.json", queryParameters: {
       "y": points.latitude,
       "x": points.longitude,
@@ -108,7 +117,7 @@ class KakaoMapController {
 
   Future<List<LatLng>> findShortCoinNore(LatLng userPoint, LatLng destinationPoint, Map<String, dynamic> storeData) async {
 
-    Response<dynamic> _getData =
+    usedDio.Response<dynamic> _getData =
         await _dioTMap.get("/tmap/routes/pedestrian", queryParameters: {
       // "origin": "${userPoint.longitude},${userPoint.latitude}",
       // "destination": "${destinationPoint.longitude},${destinationPoint.latitude}",
@@ -148,6 +157,133 @@ class KakaoMapController {
 
     return coordinates;
   }
+
+
+  Future<void> initMethod() async {
+    List<Map<String, dynamic>>? _result2 =
+    await getCoinNore(userLocation.userLatLng!);
+
+    findAllStore = _result2 ?? [];
+
+    LatLng? _test1 = await _paintCircle();
+    List<LatLng>? _test2 = await _markingStore(_result2);
+    // LatLng? _test3 = await _3(_result2);
+    List<LatLng>? _test4 = await _paintCloseStore(_result2);
+
+    // if (_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
+    //   fitBounds([_test1, ..._test2, _test3, ..._test4]);
+    // }
+
+    if (_test1 != null && _test2 != null && _test4 != null) {
+      fitBounds([_test1, ..._test2, ..._test4]);
+    }
+  }
+
+  Future<LatLng?> _paintCircle() async {
+    LatLng? center = userLocation.userLatLng;
+    if (center != null) {
+      circles.add(Circle(
+          circleId: "3",
+          center: center,
+          radius: 1000,
+          strokeColor: Colors.redAccent,
+          strokeOpacity: 1,
+          strokeWidth: 4));
+      return center;
+    }
+    return null;
+  }
+
+  Future<List<LatLng>?> _markingStore(
+      List<Map<String, dynamic>>? _result) async {
+    if (_result == null) return null;
+
+    for (var item in _result) {
+      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+      markers.add(
+        Marker(
+            markerId: item["id"],
+            latLng: _latlng,
+            infoWindowText: item["place_name"],
+            markerImageSrc:
+            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+      );
+    }
+
+    markers = LocationService.sortMarkersByDistance(
+        userLocation.userLatLng!, markers);
+
+    List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
+    return bounds2;
+  }
+
+  // Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
+  //   if (_result == null) return null;
+  //   List<LatLng> bounds2 = [];
+  //   for (var item in _result) {
+  //     LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+  //     // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+  //
+  //     markers.add(
+  //       Marker(
+  //           markerId: item["id"],
+  //           latLng: _latlng,
+  //           infoWindowText: item["place_name"],
+  //           markerImageSrc:
+  //               'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+  //     );
+  //     bounds2.add(_latlng);
+  //   }
+  //
+  //   LatLng closestPoint =
+  //       LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+  //
+  //   return closestPoint;
+  // }
+
+  Future<List<LatLng>?> _paintCloseStore(
+      List<Map<String, dynamic>>? _result2) async {
+    if (_result2 == null) return null;
+    List<LatLng> bounds2 = [];
+    for (var item in _result2) {
+      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+
+      markers.add(
+        Marker(
+            markerId: item["id"],
+            latLng: _latlng,
+            infoWindowText: item["place_name"],
+            markerImageSrc:
+            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+      );
+      bounds2.add(_latlng);
+    }
+
+    LatLng closestPoint =
+    LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+
+    Map<String, dynamic> _findClosedStore = _result2.firstWhere(
+            (Map<String, dynamic> e) =>
+        LatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
+
+    List<LatLng>? _result = await findShortCoinNore(
+        userLocation.userLatLng!, closestPoint, _findClosedStore);
+
+    if (_result == null) return null;
+
+    polylines.add(Polyline(
+        polylineId: "1",
+        points: _result,
+        strokeColor: Colors.blueAccent,
+        strokeOpacity: 0.7,
+        strokeWidth: 8));
+
+    return _result;
+  }
+
 
   clear() {
     _webViewController.evaluateJavascript(source: 'clear();');

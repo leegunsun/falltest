@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'firebase_options.dart';
 import 'home.dart';
+import 'kakao_map_controller.dart';
 
 InAppLocalhostServer server = InAppLocalhostServer(port: 8080);
 
@@ -72,39 +73,65 @@ class _MyHomePageState extends State<MyHomePage> {
           centerTitle: true,
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-              decoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black45,
-                    offset: Offset(0, 2),
-                    blurRadius: 3
-                  )
-                ],
-                border: Border.all(
-                  color: Color(0xffFFB6C1),
+            child: Row(
+              children: [
+                Flexible(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+                    decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black45,
+                          offset: Offset(0, 2),
+                          blurRadius: 3
+                        )
+                      ],
+                      border: Border.all(
+                        color: Color(0xffFFB6C1),
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      widget.title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-                color: Colors.white,
-                // gradient: const LinearGradient(
-                //   begin: Alignment.topLeft,
-                //   end: Alignment.bottomRight,
-                //   colors: [
-                //     Color(0xffBFECFF), // Start color
-                //     Color(0xffFFB6C1), // End color
-                //   ],
-                // ),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Text(
-                widget.title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                const SizedBox(width: 13,),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () async {
+                    if(Get.isRegistered<KakaoMapController>(tag: "kakaoController")) {
+                      await Get.find<KakaoMapController>(tag: "kakaoController").initMethod();
+                      setState(() {});
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+                    decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black45,
+                            offset: Offset(0, 2),
+                            blurRadius: 3
+                        )
+                      ],
+                      border: Border.all(
+                        color: Color(0xffFFB6C1),
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Icon(Icons.refresh),
+                  ),
+                )
+              ],
             ),
           ),
           systemOverlayStyle: const SystemUiOverlayStyle(

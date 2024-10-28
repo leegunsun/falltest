@@ -60,10 +60,11 @@ class _KakaoMapState extends State<KakaoMap> {
       ),
       onWebViewCreated: (InAppWebViewController controller) async {},
       onLoadStop: (InAppWebViewController controller, url) async {
-        _mapController = KakaoMapController(controller);
+
+        _mapController = Get.put(KakaoMapController(controller),tag: "kakaoController");
 
         while (_mapController == null) {
-          _mapController = KakaoMapController(controller);
+          _mapController = Get.put(KakaoMapController(controller),tag: "kakaoController");
         }
 
         if (widget.onMapCreated != null) widget.onMapCreated!(_mapController);

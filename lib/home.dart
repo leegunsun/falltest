@@ -23,139 +23,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   KakaoMapController? _kakaoMapController;
-  var userLocation = Get.find<LocationService>();
-
-  Set<Polyline> polylines = {};
-  Set<Circle> circles = {};
-  Set<Polygon> polygons = {};
-  Set<Marker> markers = {};
-
-  Future<void> _initMethod() async {
-    List<Map<String, dynamic>>? _result2 =
-    await _kakaoMapController?.getCoinNore(userLocation.userLatLng!);
-
-    _kakaoMapController?.findAllStore = _result2 ?? [];
-
-    LatLng? _test1 = await _paintCircle();
-    List<LatLng>? _test2 = await _markingStore(_result2);
-    // LatLng? _test3 = await _3(_result2);
-    List<LatLng>? _test4 = await _paintCloseStore(_result2);
-
-    // if (_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
-    //   fitBounds([_test1, ..._test2, _test3, ..._test4]);
-    // }
-
-    if (_test1 != null && _test2 != null && _test4 != null) {
-      fitBounds([_test1, ..._test2, ..._test4]);
-    }
-
-    setState(() {});
-  }
-
-  Future<LatLng?> _paintCircle() async {
-    LatLng? center = userLocation.userLatLng;
-    if (center != null) {
-      circles.add(Circle(
-          circleId: "3",
-          center: center,
-          radius: 1000,
-          strokeColor: Colors.redAccent,
-          strokeOpacity: 1,
-          strokeWidth: 4));
-      return center;
-    }
-    return null;
-  }
-
-  Future<List<LatLng>?> _markingStore(
-      List<Map<String, dynamic>>? _result) async {
-    if (_result == null) return null;
-
-    for (var item in _result) {
-      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
-      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
-
-      markers.add(
-        Marker(
-            markerId: item["id"],
-            latLng: _latlng,
-            infoWindowText: item["place_name"],
-            markerImageSrc:
-            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
-      );
-    }
-
-    markers = LocationService.sortMarkersByDistance(
-        userLocation.userLatLng!, markers);
-
-    List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
-    return bounds2;
-  }
-
-  // Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
-  //   if (_result == null) return null;
-  //   List<LatLng> bounds2 = [];
-  //   for (var item in _result) {
-  //     LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
-  //     // LatLng _latlng = LatLng(37.3625806, 126.9248464);
-  //
-  //     markers.add(
-  //       Marker(
-  //           markerId: item["id"],
-  //           latLng: _latlng,
-  //           infoWindowText: item["place_name"],
-  //           markerImageSrc:
-  //               'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
-  //     );
-  //     bounds2.add(_latlng);
-  //   }
-  //
-  //   LatLng closestPoint =
-  //       LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
-  //
-  //   return closestPoint;
-  // }
-
-  Future<List<LatLng>?> _paintCloseStore(
-      List<Map<String, dynamic>>? _result2) async {
-    if (_result2 == null) return null;
-    List<LatLng> bounds2 = [];
-    for (var item in _result2) {
-      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
-      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
-
-      markers.add(
-        Marker(
-            markerId: item["id"],
-            latLng: _latlng,
-            infoWindowText: item["place_name"],
-            markerImageSrc:
-            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
-      );
-      bounds2.add(_latlng);
-    }
-
-    LatLng closestPoint =
-    LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
-
-    Map<String, dynamic> _findClosedStore = _result2.firstWhere(
-            (Map<String, dynamic> e) =>
-        LatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
-
-    List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
-        userLocation.userLatLng!, closestPoint, _findClosedStore);
-
-    if (_result == null) return null;
-
-    polylines.add(Polyline(
-        polylineId: "1",
-        points: _result,
-        strokeColor: Colors.blueAccent,
-        strokeOpacity: 0.7,
-        strokeWidth: 8));
-
-    return _result;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +32,8 @@ class _HomeState extends State<Home> {
           KakaoMap(
             onMapCreated: (KakaoMapController controller) {
               _kakaoMapController = controller;
-              _initMethod();
+              _kakaoMapController?.initMethod();
+              setState(() {});
             },
             onMapTap: (LatLng latLng) async {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -185,10 +53,10 @@ class _HomeState extends State<Home> {
               print("zoomLevel : $zoomLevel");
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             },
-            polylines: polylines,
-            circles: circles,
-            polygons: polygons,
-            markers: markers.toList(),
+            polylines: _kakaoMapController?.polylines,
+            circles: _kakaoMapController?.circles,
+            polygons: _kakaoMapController?.polygons,
+            markers: _kakaoMapController?.markers.toList(),
           ),
           Positioned(
             bottom: 0,
@@ -201,7 +69,7 @@ class _HomeState extends State<Home> {
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(30)),
+                            BorderRadius.vertical(top: Radius.circular(30)),
                         boxShadow: [
                           BoxShadow(
                               color: Colors.black45,
@@ -213,42 +81,44 @@ class _HomeState extends State<Home> {
                           right: 24.0, left: 24.0, top: 30),
                       child: SingleChildScrollView(
                         child: Column(
-                          children: markers
-                              .map((e) {
-                            bool _isSelect = e.infoWindowText
-                                .toString() ==
-                                _kakaoMapController
-                                    ?.selectStore?[
-                                "place_name"];
+                          children: _kakaoMapController?.markers == null
+                              ? [const SizedBox()]
+                              : _kakaoMapController!.markers.map((e) {
+                                  bool _isSelect =
+                                      e.infoWindowText.toString() ==
+                                          _kakaoMapController
+                                              ?.selectStore?["place_name"];
 
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () async {
-                                await _selecetStoreMaker(e.latLng);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 9.0),
-                                child: Container(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        e.infoWindowText.toString(),
-                                        style: TextStyle(
-                                            color: _isSelect ? Colors.blueAccent : null,
-                                        fontWeight: _isSelect ? FontWeight.bold : null),
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onTap: () async {
+                                      await _selecetStoreMaker(e.latLng);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 9.0),
+                                      child: Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              e.infoWindowText.toString(),
+                                              style: TextStyle(
+                                                  color: _isSelect
+                                                      ? Colors.blueAccent
+                                                      : null,
+                                                  fontWeight: _isSelect
+                                                      ? FontWeight.bold
+                                                      : null),
+                                            ),
+                                            Text("${e.distance.toString()} m"),
+                                          ],
+                                        ),
                                       ),
-                                      Text(
-                                          "${e.distance.toString()} m"),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          })
-                              .toList(),
+                                    ),
+                                  );
+                                }).toList(),
                         ),
                       ),
                     ),
@@ -520,16 +390,16 @@ class _HomeState extends State<Home> {
   Future<void> _selecetStoreMaker(LatLng latLng) async {
     _kakaoMapController?.selectStore = _kakaoMapController?.findAllStore
         .firstWhere((Map<String, dynamic> e) =>
-    LatLng(double.parse(e["y"]), double.parse(e["x"])) == latLng);
+            LatLng(double.parse(e["y"]), double.parse(e["x"])) == latLng);
 
     List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
-        userLocation.userLatLng!,
+        _kakaoMapController!.userLocation.userLatLng!,
         latLng,
         _kakaoMapController?.selectStore ?? {});
 
-    polylines.clear();
+    _kakaoMapController!.polylines.clear();
 
-    polylines.add(Polyline(
+    _kakaoMapController!.polylines.add(Polyline(
         polylineId: "1",
         points: _result ?? [],
         strokeColor: Colors.blueAccent,
@@ -541,10 +411,10 @@ class _HomeState extends State<Home> {
 
   _clear() {
     _kakaoMapController?.clear();
-    polylines.clear();
-    circles.clear();
-    polygons.clear();
-    markers.clear();
+    _kakaoMapController?..clear();
+    _kakaoMapController?.circles.clear();
+    _kakaoMapController?.polygons.clear();
+    _kakaoMapController?.markers.clear();
   }
 
   List<LatLng> createOuterBounds() {

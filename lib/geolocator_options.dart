@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 
+import 'marker.dart';
 import 'model/lat_lng.dart';
 
 class LocationService extends GetxService {
@@ -131,6 +132,19 @@ class LocationService extends GetxService {
     }
 
     return closestPoint;
+  }
+
+  // 마커 정렬 함수
+  static Set<Marker> sortMarkersByDistance(LatLng userLocation, Set<Marker> markers) {
+    List<Marker> sortedMarkers = markers.toList();
+
+    sortedMarkers.sort((a, b) {
+      Decimal distanceA = _calculateDistance(userLocation, a.latLng);
+      Decimal distanceB = _calculateDistance(userLocation, b.latLng);
+      return distanceA.compareTo(distanceB);
+    });
+
+   return markers = sortedMarkers.toSet(); // 정렬된 마커를 다시 Set으로 변환
   }
 }
 

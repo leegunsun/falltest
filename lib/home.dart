@@ -85,33 +85,35 @@ class _HomeState extends State<Home> {
       );
     }
 
+    markers = LocationService.sortMarkersByDistance(userLocation.userLatLng!, markers);
+
     List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
     return bounds2;
   }
 
-  Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
-    if (_result == null) return null;
-    List<LatLng> bounds2 = [];
-    for (var item in _result) {
-      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
-      // LatLng _latlng = LatLng(37.3625806, 126.9248464);
-
-      markers.add(
-        Marker(
-            markerId: item["id"],
-            latLng: _latlng,
-            infoWindowText: item["place_name"],
-            markerImageSrc:
-                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
-      );
-      bounds2.add(_latlng);
-    }
-
-    LatLng closestPoint =
-        LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
-
-    return closestPoint;
-  }
+  // Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
+  //   if (_result == null) return null;
+  //   List<LatLng> bounds2 = [];
+  //   for (var item in _result) {
+  //     LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+  //     // LatLng _latlng = LatLng(37.3625806, 126.9248464);
+  //
+  //     markers.add(
+  //       Marker(
+  //           markerId: item["id"],
+  //           latLng: _latlng,
+  //           infoWindowText: item["place_name"],
+  //           markerImageSrc:
+  //               'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+  //     );
+  //     bounds2.add(_latlng);
+  //   }
+  //
+  //   LatLng closestPoint =
+  //       LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+  //
+  //   return closestPoint;
+  // }
 
   Future<List<LatLng>?> _paintCloseStore(
       List<Map<String, dynamic>>? _result2) async {
@@ -213,10 +215,20 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   Container(
-                    child: Column(
-                      children: markers
-                          .map((e) => Text(e.infoWindowText.toString()))
-                          .toList(),
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: markers
+                            .map((e) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 9.0),
+                              child: Text(e.infoWindowText.toString()),
+                            ))
+                            .toList(),
+                      ),
                     ),
                   )
                   // ElevatedButton(

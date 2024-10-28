@@ -1,4 +1,5 @@
 import 'package:dyt/geolocator_options.dart';
+import 'package:dyt/local_db.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -17,15 +18,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await server.start();
   await dotenv.load();
-  // LocationService의 initService가 완료될 때까지 대기
+  await LocalDB.initDatabase();
+
   await Get.putAsync(() async {
     final locationService = LocationService();
     await locationService.initService();
     return locationService;
   });
-
-  // Hide the status bar and navigation bar
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   runApp(const MyApp());
 
@@ -84,15 +83,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     blurRadius: 3
                   )
                 ],
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xffBFECFF), // Start color
-                    Color(0xffFFB6C1), // End color
-                  ],
+                border: Border.all(
+                  color: Color(0xffFFB6C1),
                 ),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                // gradient: const LinearGradient(
+                //   begin: Alignment.topLeft,
+                //   end: Alignment.bottomRight,
+                //   colors: [
+                //     Color(0xffBFECFF), // Start color
+                //     Color(0xffFFB6C1), // End color
+                //   ],
+                // ),
+                borderRadius: BorderRadius.circular(30),
               ),
               child: Text(
                 widget.title,

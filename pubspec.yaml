@@ -45,6 +45,7 @@ dependencies:
   get: ^4.6.6
   dio: ^5.7.0
   decimal: ^3.0.2
+  sqflite: ^2.4.0
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,3 @@
-
 import 'model/lat_lng.dart';
 
 class Marker {
@@ -10,6 +9,7 @@ class Marker {
   int? offsetX;
   int? offsetY;
   int? distance;
+  int? index;
   String? infoWindowText;
 
   Marker({
@@ -21,6 +21,7 @@ class Marker {
     this.offsetX,
     this.distance,
     this.offsetY,
+    this.index,
     this.infoWindowText,
   });
 
@@ -34,10 +35,23 @@ class Marker {
   @override
   int get hashCode => markerId.hashCode ^ infoWindowText.hashCode;
 
+  factory Marker.fromJson(Map<String, dynamic> json) =>
+      Marker(
+        markerId: json["id"],
+        markerImageSrc: json["markerImageSrc"],
+        latLng: LatLng(double.parse(json["latLng"]["latitude"]), double.parse(json["latLng"]["longitude"])),
+        width: json["width"],
+        height: json["height"],
+        offsetX: null,
+        offsetY: null,
+        index: json["index"],
+        infoWindowText: json["place_name"],
+      );
+
   // toJson 메서드 추가
   Map<String, dynamic> toJson() {
     return {
-      'markerId': markerId,
+      'id': markerId,
       'latLng': {
         'latitude': latLng.latitude,
         'longitude': latLng.longitude,
@@ -45,10 +59,11 @@ class Marker {
       'markerImageSrc': markerImageSrc,
       'width': width,
       'height': height,
-      'offsetX': offsetX,
+      'x': offsetX,
       'distance': distance,
-      'offsetY': offsetY,
-      'infoWindowText': infoWindowText,
+      'y': offsetY,
+      'index': index,
+      'place_name': infoWindowText,
     };
   }
 }

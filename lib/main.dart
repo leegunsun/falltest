@@ -20,7 +20,7 @@ void main() async {
   await server.start();
   await dotenv.load();
   await LocalDB.initDatabase();
-print("1");
+  print("1");
   await Get.putAsync(() async {
     final locationService = LocationService();
     print("2");
@@ -62,83 +62,112 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        // This allows the body to extend behind the app bar and status bar
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          clipBehavior: Clip.none,
-          elevation: 0,
-          centerTitle: true,
-          title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Flexible(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-                    decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black45,
-                          offset: Offset(0, 2),
-                          blurRadius: 3
-                        )
-                      ],
-                      border: Border.all(
-                        color: Color(0xffFFB6C1),
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldPop = await _showExitConfirmationDialog(context);
+        return shouldPop;
+      },
+      child: Scaffold(
+          // This allows the body to extend behind the app bar and status bar
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            clipBehavior: Clip.none,
+            elevation: 0,
+            centerTitle: true,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 13, vertical: 10),
+                      decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black45,
+                              offset: Offset(0, 2),
+                              blurRadius: 3)
+                        ],
+                        border: Border.all(
+                          color: Color(0xffFFB6C1),
+                        ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
                       ),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Text(
-                      widget.title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                      child: Text(
+                        widget.title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 13,),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () async {
-                    if(Get.isRegistered<KakaoMapController>()) {
-                      await Get.find<KakaoMapController>().initMethod();
-                      setState(() {});
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
-                    decoration: BoxDecoration(
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black45,
-                            offset: Offset(0, 2),
-                            blurRadius: 3
-                        )
-                      ],
-                      border: Border.all(
-                        color: Color(0xffFFB6C1),
-                      ),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Icon(Icons.refresh),
+                  const SizedBox(
+                    width: 13,
                   ),
-                )
-              ],
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () async {
+                      if (Get.isRegistered<KakaoMapController>()) {
+                        await Get.find<KakaoMapController>().initMethod();
+                        setState(() {});
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 13, vertical: 10),
+                      decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black45,
+                              offset: Offset(0, 2),
+                              blurRadius: 3)
+                        ],
+                        border: Border.all(
+                          color: Color(0xffFFB6C1),
+                        ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Icon(Icons.refresh),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
             ),
           ),
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarIconBrightness: Brightness.dark,
+          // Remove padding caused by the status bar
+          body: Home()),
+    );
+  }
+
+  Future<bool> _showExitConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('앱을 종료 하시겠습니까?'),
+        content: Text('확인을 눌러서 앱을 종료하세요.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('아니오'),
           ),
-        ),
-        // Remove padding caused by the status bar
-        body: Home());
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('예'),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

@@ -23,7 +23,7 @@ class KakaoMapController extends GetxController {
   KakaoMapController(this._webViewController);
 
   List<Map<String, dynamic>> findAllStore = [];
-  Map<String, dynamic>? selectStore;
+  Marker? selectStore;
 
   var userLocation = Get.find<LocationService>();
 
@@ -216,6 +216,9 @@ class KakaoMapController extends GetxController {
         userLocation.userLatLng.value, markers);
 
     List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
+
+    findAllStore = markers.map((e) => e.toJson()).toList();
+
     return bounds2;
   }
 

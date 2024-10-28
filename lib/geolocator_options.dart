@@ -140,6 +140,7 @@ class LocationService extends GetxService {
   }
 
   // 마커 정렬 함수
+// 마커 정렬 함수
   static Set<Marker> sortMarkersByDistance(LatLng userLocation, Set<Marker> markers) {
     List<Marker> sortedMarkers = markers.map((marker) {
       int distance = calculateDistance(userLocation, marker.latLng).round();
@@ -152,7 +153,21 @@ class LocationService extends GetxService {
       );
     }).toList();
 
-    sortedMarkers.sort((a, b) => a.distance!.compareTo(b.distance!)); // 거리 순으로 정렬
+    // 거리 순으로 정렬
+    sortedMarkers.sort((a, b) => a.distance!.compareTo(b.distance!));
+
+    // 정렬된 순서에 따라 index 필드 추가
+    for (int i = 0; i < sortedMarkers.length; i++) {
+      sortedMarkers[i] = Marker(
+        markerId: sortedMarkers[i].markerId,
+        latLng: sortedMarkers[i].latLng,
+        infoWindowText: sortedMarkers[i].infoWindowText,
+        markerImageSrc: sortedMarkers[i].markerImageSrc,
+        distance: sortedMarkers[i].distance,
+        index: i + 1, // 추가한 index 필드
+      );
+    }
+
     return sortedMarkers.toSet(); // 정렬된 마커 Set 반환
   }
 

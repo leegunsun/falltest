@@ -10,8 +10,10 @@ import 'model/lat_lng.dart';
 class LocationService extends GetxService {
 
   LatLng? userLatLng;
-  final double defaultLatitude = 37.45194876896246;
-  final double defaultLongitude = 126.63104459058991;
+  final double defaultLatitude = 37.48891558895957;
+  // final double defaultLatitude = 37.45194876896246;
+  final double defaultLongitude = 127.12721264903897;
+  // final double defaultLongitude = 126.63104459058991;
 
   Future<void> initService() async {
     await getCurrentLocation();

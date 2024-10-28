@@ -61,6 +61,11 @@ class _KakaoMapState extends State<KakaoMap> {
       onWebViewCreated: (InAppWebViewController controller) async {},
       onLoadStop: (InAppWebViewController controller, url) async {
         _mapController = KakaoMapController(controller);
+
+        while (_mapController == null) {
+          _mapController = KakaoMapController(controller);
+        }
+
         if (widget.onMapCreated != null) widget.onMapCreated!(_mapController);
 
         // 페이지 로드 후 appkey 설정

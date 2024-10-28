@@ -30,104 +30,117 @@ class _HomeState extends State<Home> {
   Set<Polygon> polygons = {};
   Set<Marker> markers = {};
 
-  Future<void> _initMethod () async {
+  Future<void> _initMethod() async {
+    List<Map<String, dynamic>>? _result2 =
+        await _kakaoMapController?.getCoinNore(userLocation.userLatLng!);
 
-    List<Map<String,
-        dynamic>>? _result2 = await _kakaoMapController
-        ?.getCoinNore(userLocation.userLatLng!);
+    _kakaoMapController?.findAllStore = _result2 ?? [];
 
-    LatLng? _test1 = await _1();
-    List<LatLng>? _test2 = await _2(_result2);
-    LatLng? _test3 = await _3(_result2);
-    List<LatLng>? _test4 = await _4(_result2);
+    LatLng? _test1 = await _paintCircle();
+    List<LatLng>? _test2 = await _markingStore(_result2);
+    // LatLng? _test3 = await _3(_result2);
+    List<LatLng>? _test4 = await _paintCloseStore(_result2);
 
-    if(_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
-      fitBounds([_test1, ..._test2, _test3, ..._test4]);
+    // if (_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
+    //   fitBounds([_test1, ..._test2, _test3, ..._test4]);
+    // }
+
+    if (_test1 != null && _test2 != null && _test4 != null) {
+      fitBounds([_test1, ..._test2, ..._test4]);
     }
-    // fitBounds([..._test4!]);
-    print(markers);
-    for (Marker item in markers) {
-      print(item.toJson());
-    }
+
     setState(() {});
   }
 
-  Future<LatLng?> _1 () async {
+  Future<LatLng?> _paintCircle() async {
     LatLng? center = userLocation.userLatLng;
     if (center != null) {
-        circles.add(Circle(
-            circleId: "3",
-            center: center,
-            radius: 1000,
-            strokeColor: Colors.redAccent,
-            strokeOpacity: 1,
-            strokeWidth: 4));
+      circles.add(Circle(
+          circleId: "3",
+          center: center,
+          radius: 1000,
+          strokeColor: Colors.redAccent,
+          strokeOpacity: 1,
+          strokeWidth: 4));
       return center;
     }
     return null;
   }
 
-  Future<List<LatLng>?> _2 (    List<Map<String,
-      dynamic>>? _result) async {
-
+  Future<List<LatLng>?> _markingStore(
+      List<Map<String, dynamic>>? _result) async {
     if (_result == null) return null;
 
     for (var item in _result) {
-
       LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
       // LatLng _latlng = LatLng(37.3625806, 126.9248464);
 
-      markers.add(Marker(markerId: item["id"],
-          latLng: _latlng,
-          infoWindowText: item["place_name"],
-          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+      markers.add(
+        Marker(
+            markerId: item["id"],
+            latLng: _latlng,
+            infoWindowText: item["place_name"],
+            markerImageSrc:
+                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+      );
     }
 
     List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
-  return bounds2;
+    return bounds2;
   }
 
-  Future<LatLng?> _3 ( List<Map<String,
-      dynamic>>? _result ) async {
-
+  Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
     if (_result == null) return null;
     List<LatLng> bounds2 = [];
     for (var item in _result) {
       LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
       // LatLng _latlng = LatLng(37.3625806, 126.9248464);
 
-      markers.add(Marker(markerId: item["id"],
-          latLng: _latlng,
-          infoWindowText: item["place_name"],
-          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+      markers.add(
+        Marker(
+            markerId: item["id"],
+            latLng: _latlng,
+            infoWindowText: item["place_name"],
+            markerImageSrc:
+                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+      );
       bounds2.add(_latlng);
     }
 
-    LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+    LatLng closestPoint =
+        LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
 
     return closestPoint;
   }
 
-  Future<List<LatLng>?> _4(List<Map<String,
-  dynamic>>? _result2) async {
-
+  Future<List<LatLng>?> _paintCloseStore(
+      List<Map<String, dynamic>>? _result2) async {
     if (_result2 == null) return null;
     List<LatLng> bounds2 = [];
     for (var item in _result2) {
       LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
       // LatLng _latlng = LatLng(37.3625806, 126.9248464);
 
-      markers.add(Marker(markerId: item["id"],
-          latLng: _latlng,
-          infoWindowText: item["place_name"],
-          markerImageSrc: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),);
+      markers.add(
+        Marker(
+            markerId: item["id"],
+            latLng: _latlng,
+            infoWindowText: item["place_name"],
+            markerImageSrc:
+                'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+      );
       bounds2.add(_latlng);
     }
 
-    LatLng closestPoint = LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+    LatLng closestPoint =
+        LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
 
-    List<LatLng>? _result = await _kakaoMapController
-        ?.findShortCoinNore(userLocation.userLatLng!, closestPoint);
+    Map<String, dynamic> _findClosedStore = _result2.firstWhere(
+        (Map<String, dynamic> e) =>
+            LatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
+
+    List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
+        userLocation.userLatLng!, closestPoint, _findClosedStore);
 
     if (_result == null) return null;
 
@@ -138,7 +151,7 @@ class _HomeState extends State<Home> {
         strokeOpacity: 0.7,
         strokeWidth: 8));
 
-   return _result;
+    return _result;
   }
 
   @override
@@ -151,10 +164,32 @@ class _HomeState extends State<Home> {
               _kakaoMapController = controller;
               _initMethod();
             },
-            onMapTap: (LatLng latLng) {
+            onMapTap: (LatLng latLng) async {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
               print("${jsonEncode(latLng)}");
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+              Map<String, dynamic>? _findStore = _kakaoMapController
+                  ?.findAllStore
+                  .firstWhere((Map<String, dynamic> e) => LatLng(double.parse(e["y"]), double.parse(e["x"])) ==
+                  latLng
+              );
+              List<LatLng>? _result =
+                  await _kakaoMapController?.findShortCoinNore(
+                      userLocation.userLatLng!, latLng, _findStore ?? {});
+
+              // _clear();
+              polylines.clear();
+
+              polylines.add(Polyline(
+                  polylineId: "1",
+                  points: _result ?? [],
+                  strokeColor: Colors.blueAccent,
+                  strokeOpacity: 0.7,
+                  strokeWidth: 8));
+
+              setState(() {
+
+              });
             },
             onCameraIdle: (LatLng latLng, int zoomLevel) {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -179,7 +214,9 @@ class _HomeState extends State<Home> {
                 children: [
                   Container(
                     child: Column(
-                      children: markers.map((e) => Text(e.infoWindowText.toString())).toList(),
+                      children: markers
+                          .map((e) => Text(e.infoWindowText.toString()))
+                          .toList(),
                     ),
                   )
                   // ElevatedButton(

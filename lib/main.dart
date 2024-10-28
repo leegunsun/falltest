@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: '코인 노래방 찾기'),
+      home: const MyHomePage(title: '코인 노래방'),
     );
   }
 }

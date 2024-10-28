@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:math';
+import 'package:decimal/decimal.dart';
 import 'package:dyt/hex_color.dart';
 
 import 'package:dyt/polygon.dart';
@@ -14,6 +16,7 @@ import 'model/lat_lng.dart';
 
 class KakaoMapController {
   final InAppWebViewController _webViewController;
+  List<Map<String, dynamic>> findAllStore = [];
 
   final Dio _dio = Dio(BaseOptions(
     baseUrl: "https://dapi.kakao.com/v2",
@@ -23,11 +26,11 @@ class KakaoMapController {
     },
   ));
 
-  final Dio _dioKakaoMobility = Dio(BaseOptions(
-    baseUrl: "https://apis-navi.kakaomobility.com/v1",
+  final Dio _dioTMap = Dio(BaseOptions(
+    baseUrl: "https://apis.openapi.sk.com",
     headers: {
-      "Authorization": dotenv.get("KAKAO_API_MASTER_KEY", fallback: ""),
-      "Content-Type": "application/json" // 여기 추가
+      "appKey": dotenv.get("TMAP_API_MASTER_KEY", fallback: ""),
+      "content-type": "application/x-www-form-urlencoded" // 여기 추가
     },
   ));
 
@@ -102,35 +105,80 @@ class KakaoMapController {
     return filteredData;
   }
 
-  Future<List<LatLng>> findShortCoinNore(LatLng userPoint, LatLng destinationPoint) async {
+  Future<List<LatLng>> findShortCoinNore(LatLng userPoint, LatLng destinationPoint, Map<String, dynamic> storeData) async {
 
     Response<dynamic> _getData =
-        await _dioKakaoMobility.get("/directions", queryParameters: {
-      "origin": "${userPoint.longitude},${userPoint.latitude}",
-      // "origin": "127.11015314141542,37.39472714688412",
-      "destination": "${destinationPoint.longitude},${destinationPoint.latitude}",
-      // "destination": "127.10824367964793,37.401937080111644",
-      "waypoints": "",
-      "priority": "RECOMMEND",
-      "car_fuel": "GASOLINE",
-      "car_hipass": "false",
-      "alternatives": "false",
-      "road_details": "false",
+        await _dioTMap.get("/tmap/routes/pedestrian", queryParameters: {
+      // "origin": "${userPoint.longitude},${userPoint.latitude}",
+      // "destination": "${destinationPoint.longitude},${destinationPoint.latitude}",
+      "startName": "내 위치",
+      "endName": storeData["place_name"] ?? "",
+      "endY": destinationPoint.latitude,
+      "endX": destinationPoint.longitude,
+      "startY": userPoint.latitude,
+      "startX": userPoint.longitude,
+      "version": "1",
     });
 
     // routes -> sections -> roads -> vertexes로 접근하여 좌표 리스트 가져오기
     List<LatLng> coordinates = [];
 
 
-      for (var road in _getData.data["routes"][0]["sections"][0]["roads"]) {
-          for (int i = 0; i < road["vertexes"].length; i += 2) {
-            double x = road["vertexes"][i];
-            double y = road["vertexes"][i + 1];
-            coordinates.add(LatLng(y, x));
+    //   for (var road in _getData.data["routes"][0]["sections"][0]["roads"]) {
+    //       for (int i = 0; i < road["vertexes"].length; i += 2) {
+    //         double x = road["vertexes"][i];
+    //         double y = road["vertexes"][i + 1];
+    //         coordinates.add(LatLng(y, x));
+    //   }
+    // }
+
+    // JSON 데이터의 `features` 안에 있는 모든 `LineString` 좌표를 가져옵니다.
+    List<dynamic> features = _getData.data["features"];
+    for (var feature in features) {
+      if (feature["geometry"]["type"] == "LineString") {
+        List<dynamic> points = feature["geometry"]["coordinates"];
+        for (var point in points) {
+          double longitude = point[0];
+          double latitude = point[1];
+          coordinates.add(LatLng(latitude, longitude));
+        }
       }
     }
 
     return coordinates;
+  }
+
+  double calculateDistance(LatLng start, LatLng end) {
+    const double earthRadius = 6371000; // 지구 반지름 (미터 단위)
+
+    double dLat = _degreeToRadian((Decimal.parse(end.latitude) - Decimal.parse(start.latitude)).toDouble());
+    double dLon = _degreeToRadian((Decimal.parse(end.longitude) - Decimal.parse(start.longitude)).toDouble());
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degreeToRadian(double.parse(start.latitude))) *
+            cos(_degreeToRadian(double.parse(end.latitude))) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c; // 두 지점 간의 거리 (미터)
+  }
+
+  int calculateTotalDistance(List<LatLng> coordinates) {
+    double totalDistance = 0.0;
+
+    for (int i = 0; i < coordinates.length - 1; i++) {
+      final LatLng start = coordinates[i];
+      final LatLng end = coordinates[i + 1];
+
+      totalDistance += calculateDistance(start, end); // 두 지점 간 거리 누적
+    }
+
+    return totalDistance.round(); // 총 거리 (미터)
+  }
+
+  double _degreeToRadian(double degree) {
+    return degree * pi / 180;
   }
 
   clear() {

@@ -236,6 +236,7 @@ function addMarker(
   let marker = new kakao.maps.Marker({
     position: markerPosition,
     image: markerImage, // 마커이미지 설정
+    clickable: true,
   });
 
   // 마커가 지도 위에 표시되도록 설정합니다
@@ -245,10 +246,19 @@ function addMarker(
 
   // 마커에 클릭이벤트를 등록합니다
   kakao.maps.event.addListener(marker, "click", function () {
+
     if (!empty(infoWindowText)) {
       // 마커 위에 인포윈도우를 표시합니다
       if (infoWindow != null) infoWindow.close();
       showInfoWindow(marker, latLng.latitude, latLng.longitude, infoWindowText);
+
+const clickCallback = {
+  latitude: parseFloat(latLng.latitude),
+  longitude: parseFloat(latLng.longitude),
+  infoWindowText: infoWindowText,
+};
+
+window.flutter_inappwebview.callHandler("onMapTap", JSON.stringify(clickCallback));
     }
   });
 }

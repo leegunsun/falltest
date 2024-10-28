@@ -1,167 +1,414 @@
 {
-  "trans_id": "0192cd8ae02f7e34b1b9974fc0111a5b",
-  "routes": [
+  "type": "FeatureCollection",
+  "features": [
     {
-      "result_code": 0,
-      "result_msg": "길찾기 성공",
-      "summary": {
-        "origin": {
-          "name": "",
-          "x": 127.11015051307636,
-          "y": 37.394725518530834
-        },
-        "destination": {
-          "name": "",
-          "x": 127.10823557165544,
-          "y": 37.401928707331656
-        },
-        "waypoints": [],
-        "priority": "RECOMMEND",
-        "bound": {
-          "min_x": 127.10873060789754,
-          "min_y": 37.39446252338457,
-          "max_x": 127.1098222529551,
-          "max_y": 37.40242724407785
-        },
-        "fare": {
-          "taxi": 4900,
-          "toll": 0
-        },
-        "distance": 1012,
-        "duration": 271
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12717913245136,
+          37.488849716328104
+        ]
       },
-      "sections": [
-        {
-          "distance": 1012,
-          "duration": 271,
-          "bound": {
-            "min_x": 127.10863660151416,
-            "min_y": 37.394469584427156,
-            "max_x": 127.10991634747967,
-            "max_y": 37.40242613861426
-          },
-          "roads": [
-            {
-              "name": "",
-              "distance": 22,
-              "duration": 5,
-              "traffic_speed": 16.0,
-              "traffic_state": 0,
-              "vertexes": [
-                127.10991634747967,
-                37.39447145478345,
-                127.10966790676201,
-                37.394469584427156
-              ]
-            },
-            {
-              "name": "판교역로",
-              "distance": 883,
-              "duration": 192,
-              "traffic_speed": 13.0,
-              "traffic_state": 2,
-              "vertexes": [
-                127.10966790676201,
-                37.394469584427156,
-                127.10967141980313,
-                37.39512739646385,
-                127.10968100356395,
-                37.396226781360426,
-                127.10967417816033,
-                37.39775855885587,
-                127.10968323318781,
-                37.39794785293074,
-                127.10967534594126,
-                37.39861458950405,
-                127.10967214334856,
-                37.399840028043634,
-                127.1096931266438,
-                37.40093048716485,
-                127.10967543155922,
-                37.40242613861426
-              ]
-            },
-            {
-              "name": "판교역로241번길",
-              "distance": 92,
-              "duration": 71,
-              "traffic_speed": 12.0,
-              "traffic_state": 2,
-              "vertexes": [
-                127.10967543155922,
-                37.40242613861426,
-                127.10863660151416,
-                37.40240029023456
-              ]
-            },
-            {
-              "name": "",
-              "distance": 15,
-              "duration": 3,
-              "traffic_speed": 16.0,
-              "traffic_state": 0,
-              "vertexes": [
-                127.10863660151416,
-                37.40240029023456,
-                127.1086494963113,
-                37.402265226201656
-              ]
-            }
+      "properties": {
+        "totalDistance": 564,
+        "totalTime": 431,
+        "index": 0,
+        "pointIndex": 0,
+        "name": "",
+        "description": "46m 이동",
+        "direction": "",
+        "nearPoiName": "",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "",
+        "facilityType": "11",
+        "facilityName": "",
+        "turnType": 200,
+        "pointType": "SP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.12717913245136,
+            37.488849716328104
           ],
-          "guides": [
-            {
-              "name": "출발지",
-              "x": 127.10991634747967,
-              "y": 37.39447145478345,
-              "distance": 0,
-              "duration": 0,
-              "type": 100,
-              "guidance": "출발지",
-              "road_index": 0
-            },
-            {
-              "name": "",
-              "x": 127.10966790676201,
-              "y": 37.394469584427156,
-              "distance": 22,
-              "duration": 5,
-              "type": 2,
-              "guidance": "우회전",
-              "road_index": 1
-            },
-            {
-              "name": "",
-              "x": 127.10967543155922,
-              "y": 37.40242613861426,
-              "distance": 883,
-              "duration": 192,
-              "type": 1,
-              "guidance": "좌회전",
-              "road_index": 2
-            },
-            {
-              "name": "",
-              "x": 127.10863660151416,
-              "y": 37.40240029023456,
-              "distance": 92,
-              "duration": 71,
-              "type": 1,
-              "guidance": "좌회전",
-              "road_index": 3
-            },
-            {
-              "name": "목적지",
-              "x": 127.1086494963113,
-              "y": 37.402265226201656,
-              "distance": 15,
-              "duration": 3,
-              "type": 101,
-              "guidance": "목적지",
-              "road_index": -1
-            }
+          [
+            127.12729023440444,
+            37.48881638886724
+          ],
+          [
+            127.12767353595345,
+            37.48870807501996
           ]
-        }
-      ]
+        ]
+      },
+      "properties": {
+        "index": 1,
+        "lineIndex": 0,
+        "name": "",
+        "description": ", 46m",
+        "distance": 46,
+        "time": 35,
+        "roadType": 22,
+        "categoryRoadType": 0,
+        "facilityType": "11",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12767353595345,
+          37.48870807501996
+        ]
+      },
+      "properties": {
+        "index": 2,
+        "pointIndex": 1,
+        "name": "에듀휴피아 독서문화원 문고",
+        "description": "에듀휴피아 독서문화원 문고 에서 좌회전 후 139m 이동 ",
+        "direction": "",
+        "nearPoiName": "에듀휴피아 독서문화원 문고",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "",
+        "facilityType": "11",
+        "facilityName": "",
+        "turnType": 12,
+        "pointType": "GP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.12767353595345,
+            37.48870807501996
+          ],
+          [
+            127.12770964149449,
+            37.48878862187356
+          ],
+          [
+            127.12782351293139,
+            37.48903859490025
+          ],
+          [
+            127.12810680370649,
+            37.489630197978535
+          ],
+          [
+            127.12822067530057,
+            37.489874616094525
+          ]
+        ]
+      },
+      "properties": {
+        "index": 3,
+        "lineIndex": 1,
+        "name": "",
+        "description": ", 139m",
+        "distance": 139,
+        "time": 99,
+        "roadType": 22,
+        "categoryRoadType": 0,
+        "facilityType": "11",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12822067530057,
+          37.489874616094525
+        ]
+      },
+      "properties": {
+        "index": 4,
+        "pointIndex": 2,
+        "name": "세븐일레븐 문정래미안점",
+        "description": "세븐일레븐 문정래미안점 에서 좌회전 후 송이로 을 따라 235m 이동 ",
+        "direction": "",
+        "nearPoiName": "세븐일레븐 문정래미안점",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "문정초교",
+        "facilityType": "11",
+        "facilityName": "",
+        "turnType": 12,
+        "pointType": "GP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.12822067530057,
+            37.489874616094525
+          ],
+          [
+            127.12820400857267,
+            37.48993016489947
+          ],
+          [
+            127.12818734184476,
+            37.48998571370442
+          ],
+          [
+            127.1281429005747,
+            37.49001626491134
+          ],
+          [
+            127.12813179031632,
+            37.49002181962162
+          ],
+          [
+            127.12734017971603,
+            37.490582851317306
+          ],
+          [
+            127.12722907650164,
+            37.4906606180622
+          ],
+          [
+            127.12640969025666,
+            37.491235536533246
+          ],
+          [
+            127.12636802659075,
+            37.49126331033493
+          ],
+          [
+            127.12633191836937,
+            37.49127719696044
+          ],
+          [
+            127.12630969808922,
+            37.49127997401522
+          ],
+          [
+            127.12627914531238,
+            37.491279973464565
+          ]
+        ]
+      },
+      "properties": {
+        "index": 5,
+        "lineIndex": 2,
+        "name": "송이로",
+        "description": "송이로, 235m",
+        "distance": 235,
+        "time": 198,
+        "roadType": 21,
+        "categoryRoadType": 0,
+        "facilityType": "11",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12627914531238,
+          37.491279973464565
+        ]
+      },
+      "properties": {
+        "index": 6,
+        "pointIndex": 3,
+        "name": "문정크리닉",
+        "description": "문정크리닉 에서 우측 횡단보도 후 37m 이동 ",
+        "direction": "",
+        "nearPoiName": "문정크리닉",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "문정동현대아파트",
+        "facilityType": "15",
+        "facilityName": "",
+        "turnType": 213,
+        "pointType": "GP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.12627914531238,
+            37.491279973464565
+          ],
+          [
+            127.12661799786368,
+            37.49147440144001
+          ]
+        ]
+      },
+      "properties": {
+        "index": 7,
+        "lineIndex": 3,
+        "name": "",
+        "description": ", 37m",
+        "distance": 37,
+        "time": 25,
+        "roadType": 21,
+        "categoryRoadType": 0,
+        "facilityType": "15",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12661799786368,
+          37.49147440144001
+        ]
+      },
+      "properties": {
+        "index": 8,
+        "pointIndex": 4,
+        "name": "",
+        "description": "좌측 횡단보도 후 보행자도로 을 따라 42m 이동 ",
+        "direction": "",
+        "nearPoiName": "",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "문정동현대아파트",
+        "facilityType": "15",
+        "facilityName": "",
+        "turnType": 212,
+        "pointType": "GP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.12661799786368,
+            37.49147440144001
+          ],
+          [
+            127.1263235717599,
+            37.491771583846145
+          ]
+        ]
+      },
+      "properties": {
+        "index": 9,
+        "lineIndex": 4,
+        "name": "보행자도로",
+        "description": "보행자도로, 42m",
+        "distance": 42,
+        "time": 28,
+        "roadType": 21,
+        "categoryRoadType": 0,
+        "facilityType": "15",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.1263235717599,
+          37.491771583846145
+        ]
+      },
+      "properties": {
+        "index": 10,
+        "pointIndex": 5,
+        "name": "화인치과의원",
+        "description": "화인치과의원 에서 4시 방향 우회전 후 송이로 을 따라 65m 이동 ",
+        "direction": "",
+        "nearPoiName": "화인치과의원",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "문정동현대아파트",
+        "facilityType": "11",
+        "facilityName": "",
+        "turnType": 19,
+        "pointType": "GP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            127.1263235717599,
+            37.491771583846145
+          ],
+          [
+            127.12641245272285,
+            37.49176603053757
+          ],
+          [
+            127.12644578270945,
+            37.49177714095932
+          ],
+          [
+            127.12695128464146,
+            37.49204656323041
+          ]
+        ]
+      },
+      "properties": {
+        "index": 11,
+        "lineIndex": 5,
+        "name": "송이로",
+        "description": "송이로, 65m",
+        "distance": 65,
+        "time": 46,
+        "roadType": 21,
+        "categoryRoadType": 0,
+        "facilityType": "11",
+        "facilityName": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.12695128464146,
+          37.49204656323041
+        ]
+      },
+      "properties": {
+        "index": 12,
+        "pointIndex": 6,
+        "name": "코인피그노래연습장",
+        "description": "도착",
+        "direction": "",
+        "nearPoiName": "코인피그노래연습장",
+        "nearPoiX": "0.0",
+        "nearPoiY": "0.0",
+        "intersectionName": "코인피그노래연습장",
+        "facilityType": "",
+        "facilityName": "",
+        "turnType": 201,
+        "pointType": "EP"
+      }
     }
   ]
 }

@@ -10,7 +10,7 @@ import 'model/lat_lng.dart';
 
 class LocationService extends GetxService {
 
-  LatLng? userLatLng;
+  Rx<LatLng> userLatLng = LatLng(0, 0).obs;
   final double defaultLatitude = 37.48891558895957;
   // final double defaultLatitude = 37.45194876896246;
   final double defaultLongitude = 127.12721264903897;
@@ -56,13 +56,16 @@ class LocationService extends GetxService {
     //     accuracy: LocationAccuracy.best,
     //   ),
     // );
+    userLatLng.value = LatLng(defaultLatitude, defaultLongitude);
+    userLatLng.refresh();
 
     _trackUserLocation();
 
   }
 
-  void _trackUserLocation() {
+  void _trackUserLocation() async {
     // 위치 변경 시마다 스트림을 통해 위치 정보 제공
+
     Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
@@ -71,10 +74,12 @@ class LocationService extends GetxService {
     ).listen((Position position) {
       if(kDebugMode) {
         print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
-        userLatLng = LatLng(defaultLatitude, defaultLongitude);
+        userLatLng.value = LatLng(defaultLatitude, defaultLongitude);
+        userLatLng.refresh();
       } else {
         print('위도: ${position.latitude}, 경도: ${position.longitude}');
-        userLatLng = LatLng(position.latitude, position.longitude);
+        userLatLng.value = LatLng(position.latitude, position.longitude);
+        userLatLng.refresh();
       }
     });
   }

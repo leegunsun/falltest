@@ -72,8 +72,8 @@ class _KakaoMapState extends State<KakaoMap> {
         // 페이지 로드 후 appkey 설정
         await controller.evaluateJavascript(source: """
       window.appkey = "${dotenv.env['KAKAO_API_KEY']}";
-      window.userlatitude = "${userLocation.userLatLng?.latitude}";
-      window.userlongitude = "${userLocation.userLatLng?.longitude}";
+      window.userlatitude = "${userLocation.userLatLng.value.latitude}";
+      window.userlongitude = "${userLocation.userLatLng.value.longitude}";
       window.userzoom = "${3}";
       if (window.loadKakaoMap) {
         window.loadKakaoMap();

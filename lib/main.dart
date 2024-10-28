@@ -20,18 +20,16 @@ void main() async {
   await server.start();
   await dotenv.load();
   await LocalDB.initDatabase();
-
+print("1");
   await Get.putAsync(() async {
     final locationService = LocationService();
+    print("2");
     await locationService.initService();
+
     return locationService;
   });
 
   runApp(const MyApp());
-
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarIconBrightness: Brightness.dark,
-  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -69,6 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          clipBehavior: Clip.none,
           elevation: 0,
           centerTitle: true,
           title: Padding(
@@ -140,6 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         // Remove padding caused by the status bar
-        body: const Home());
+        body: Home());
   }
 }

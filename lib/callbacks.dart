@@ -4,6 +4,7 @@ import 'kakao_map_controller.dart';
 import 'model/lat_lng.dart';
 
 typedef MapCreateCallback = void Function(KakaoMapController controller);
+typedef SetStateCallback = void Function();
 
 //typedef void CameraPositionCallback(CameraPosition position);
 

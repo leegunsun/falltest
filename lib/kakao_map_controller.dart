@@ -161,7 +161,7 @@ class KakaoMapController extends GetxController {
 
   Future<void> initMethod() async {
     List<Map<String, dynamic>>? _result2 =
-    await getCoinNore(userLocation.userLatLng!);
+    await getCoinNore(userLocation.userLatLng.value);
 
     findAllStore = _result2 ?? [];
 
@@ -180,7 +180,7 @@ class KakaoMapController extends GetxController {
   }
 
   Future<LatLng?> _paintCircle() async {
-    LatLng? center = userLocation.userLatLng;
+    LatLng? center = userLocation.userLatLng.value;
     if (center != null) {
       circles.add(Circle(
           circleId: "3",
@@ -213,7 +213,7 @@ class KakaoMapController extends GetxController {
     }
 
     markers = LocationService.sortMarkersByDistance(
-        userLocation.userLatLng!, markers);
+        userLocation.userLatLng.value, markers);
 
     List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
     return bounds2;
@@ -263,14 +263,14 @@ class KakaoMapController extends GetxController {
     }
 
     LatLng closestPoint =
-    LocationService.findClosestPoint(userLocation.userLatLng!, bounds2);
+    LocationService.findClosestPoint(userLocation.userLatLng.value, bounds2);
 
     Map<String, dynamic> _findClosedStore = _result2.firstWhere(
             (Map<String, dynamic> e) =>
         LatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
 
     List<LatLng>? _result = await findShortCoinNore(
-        userLocation.userLatLng!, closestPoint, _findClosedStore);
+        userLocation.userLatLng.value, closestPoint, _findClosedStore);
 
     if (_result == null) return null;
 

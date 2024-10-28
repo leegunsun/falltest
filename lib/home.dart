@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'callbacks.dart';
 import 'circle.dart';
 import 'geolocator_options.dart';
 import 'kakao_map.dart';
@@ -23,6 +24,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   KakaoMapController? _kakaoMapController;
+  Worker? _worker;
+
+  @override
+  void initState() {
+    super.initState();
+    _worker = ever<LatLng>(Get.find<LocationService>().userLatLng, (LatLng value) {
+      _set();
+    });
+  }
+
+  void _set() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _worker?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +53,10 @@ class _HomeState extends State<Home> {
           KakaoMap(
             onMapCreated: (KakaoMapController controller) {
               _kakaoMapController = controller;
-              _kakaoMapController?.initMethod();
-              setState(() {});
+              if(_kakaoMapController != null){
+                _kakaoMapController?.initMethod();
+                setState(() {});
+              }
             },
             onMapTap: (LatLng latLng) async {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -69,7 +92,7 @@ class _HomeState extends State<Home> {
                     decoration: const BoxDecoration(
                         color: Colors.white,
                         borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(30)),
+                        BorderRadius.vertical(top: Radius.circular(30)),
                         boxShadow: [
                           BoxShadow(
                               color: Colors.black45,
@@ -84,41 +107,41 @@ class _HomeState extends State<Home> {
                           children: _kakaoMapController?.markers == null
                               ? [const SizedBox()]
                               : _kakaoMapController!.markers.map((e) {
-                                  bool _isSelect =
-                                      e.infoWindowText.toString() ==
-                                          _kakaoMapController
-                                              ?.selectStore?["place_name"];
+                            bool _isSelect =
+                                e.infoWindowText.toString() ==
+                                    _kakaoMapController
+                                        ?.selectStore?["place_name"];
 
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.opaque,
-                                    onTap: () async {
-                                      await _selecetStoreMaker(e.latLng);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 9.0),
-                                      child: Container(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              e.infoWindowText.toString(),
-                                              style: TextStyle(
-                                                  color: _isSelect
-                                                      ? Colors.blueAccent
-                                                      : null,
-                                                  fontWeight: _isSelect
-                                                      ? FontWeight.bold
-                                                      : null),
-                                            ),
-                                            Text("${e.distance.toString()} m"),
-                                          ],
-                                        ),
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () async {
+                                await _selecetStoreMaker(e.latLng);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 9.0),
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        e.infoWindowText.toString(),
+                                        style: TextStyle(
+                                            color: _isSelect
+                                                ? Colors.blueAccent
+                                                : null,
+                                            fontWeight: _isSelect
+                                                ? FontWeight.bold
+                                                : null),
                                       ),
-                                    ),
-                                  );
-                                }).toList(),
+                                      Text("${e.distance.toString()} m"),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
@@ -393,7 +416,7 @@ class _HomeState extends State<Home> {
             LatLng(double.parse(e["y"]), double.parse(e["x"])) == latLng);
 
     List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
-        _kakaoMapController!.userLocation.userLatLng!,
+        _kakaoMapController!.userLocation.userLatLng.value,
         latLng,
         _kakaoMapController?.selectStore ?? {});
 

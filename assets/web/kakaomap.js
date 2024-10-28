@@ -253,8 +253,8 @@ function addMarker(
       showInfoWindow(marker, latLng.latitude, latLng.longitude, infoWindowText);
 
 const clickCallback = {
-  latitude: parseFloat(latLng.latitude),
-  longitude: parseFloat(latLng.longitude),
+  latitude: parseFloat(latLng.latitude), // 숫자로 변환
+  longitude: parseFloat(latLng.longitude), // 숫자로 변환
   infoWindowText: infoWindowText,
 };
 

@@ -17,6 +17,7 @@ import 'model/lat_lng.dart';
 class KakaoMapController {
   final InAppWebViewController _webViewController;
   List<Map<String, dynamic>> findAllStore = [];
+  Map<String, dynamic>? selectStore;
 
   final Dio _dio = Dio(BaseOptions(
     baseUrl: "https://dapi.kakao.com/v2",
@@ -146,39 +147,6 @@ class KakaoMapController {
     }
 
     return coordinates;
-  }
-
-  double calculateDistance(LatLng start, LatLng end) {
-    const double earthRadius = 6371000; // 지구 반지름 (미터 단위)
-
-    double dLat = _degreeToRadian((Decimal.parse(end.latitude) - Decimal.parse(start.latitude)).toDouble());
-    double dLon = _degreeToRadian((Decimal.parse(end.longitude) - Decimal.parse(start.longitude)).toDouble());
-
-    double a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_degreeToRadian(double.parse(start.latitude))) *
-            cos(_degreeToRadian(double.parse(end.latitude))) *
-            sin(dLon / 2) *
-            sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-
-    return earthRadius * c; // 두 지점 간의 거리 (미터)
-  }
-
-  int calculateTotalDistance(List<LatLng> coordinates) {
-    double totalDistance = 0.0;
-
-    for (int i = 0; i < coordinates.length - 1; i++) {
-      final LatLng start = coordinates[i];
-      final LatLng end = coordinates[i + 1];
-
-      totalDistance += calculateDistance(start, end); // 두 지점 간 거리 누적
-    }
-
-    return totalDistance.round(); // 총 거리 (미터)
-  }
-
-  double _degreeToRadian(double degree) {
-    return degree * pi / 180;
   }
 
   clear() {

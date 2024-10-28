@@ -170,28 +170,8 @@ class _HomeState extends State<Home> {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
               print("${jsonEncode(latLng)}");
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-              Map<String, dynamic>? _findStore = _kakaoMapController
-                  ?.findAllStore
-                  .firstWhere((Map<String, dynamic> e) => LatLng(double.parse(e["y"]), double.parse(e["x"])) ==
-                  latLng
-              );
-              List<LatLng>? _result =
-                  await _kakaoMapController?.findShortCoinNore(
-                      userLocation.userLatLng!, latLng, _findStore ?? {});
 
-              // _clear();
-              polylines.clear();
-
-              polylines.add(Polyline(
-                  polylineId: "1",
-                  points: _result ?? [],
-                  strokeColor: Colors.blueAccent,
-                  strokeOpacity: 0.7,
-                  strokeWidth: 8));
-
-              setState(() {
-
-              });
+              await _selecetStoreMaker(latLng);
             },
             onCameraIdle: (LatLng latLng, int zoomLevel) {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -215,19 +195,44 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   Container(
+                    height: Get.height / 4,
                     width: Get.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black45,
+                          offset: Offset(0, -1),
+                          blurRadius: 10
+                        )
+                      ]
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        children: markers
-                            .map((e) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 9.0),
-                              child: Text(e.infoWindowText.toString()),
-                            ))
-                            .toList(),
+                      padding: const EdgeInsets.only(right: 24.0,left: 24.0, top: 30),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: markers
+                              .map((e) => GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () async {
+                                  await _selecetStoreMaker(e.latLng);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 9.0),
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(e.infoWindowText.toString(),),
+                                        Text("${e.distance.toString()} m"),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ))
+                              .toList(),
+                        ),
                       ),
                     ),
                   )
@@ -493,6 +498,29 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
+  }
+
+  Future<void> _selecetStoreMaker(LatLng latLng) async {
+    _kakaoMapController?.selectStore = _kakaoMapController
+        ?.findAllStore
+        .firstWhere((Map<String, dynamic> e) => LatLng(double.parse(e["y"]), double.parse(e["x"])) ==
+        latLng
+    );
+
+    List<LatLng>? _result =
+        await _kakaoMapController?.findShortCoinNore(
+            userLocation.userLatLng!, latLng, _kakaoMapController?.selectStore ?? {});
+
+    polylines.clear();
+
+    polylines.add(Polyline(
+        polylineId: "1",
+        points: _result ?? [],
+        strokeColor: Colors.blueAccent,
+        strokeOpacity: 0.7,
+        strokeWidth: 8));
+
+    setState(() {});
   }
 
   _clear() {

@@ -9,6 +9,7 @@ class Marker {
   int? height;
   int? offsetX;
   int? offsetY;
+  int? distance;
   String? infoWindowText;
 
   Marker({
@@ -18,6 +19,7 @@ class Marker {
     this.width,
     this.height,
     this.offsetX,
+    this.distance,
     this.offsetY,
     this.infoWindowText,
   });
@@ -44,6 +46,7 @@ class Marker {
       'width': width,
       'height': height,
       'offsetX': offsetX,
+      'distance': distance,
       'offsetY': offsetY,
       'infoWindowText': infoWindowText,
     };

@@ -136,15 +136,53 @@ class LocationService extends GetxService {
 
   // 마커 정렬 함수
   static Set<Marker> sortMarkersByDistance(LatLng userLocation, Set<Marker> markers) {
-    List<Marker> sortedMarkers = markers.toList();
+    List<Marker> sortedMarkers = markers.map((marker) {
+      int distance = calculateDistance(userLocation, marker.latLng).round();
+      return Marker(
+        markerId: marker.markerId,
+        latLng: marker.latLng,
+        infoWindowText: marker.infoWindowText,
+        markerImageSrc: marker.markerImageSrc,
+        distance: distance,
+      );
+    }).toList();
 
-    sortedMarkers.sort((a, b) {
-      Decimal distanceA = _calculateDistance(userLocation, a.latLng);
-      Decimal distanceB = _calculateDistance(userLocation, b.latLng);
-      return distanceA.compareTo(distanceB);
-    });
+    sortedMarkers.sort((a, b) => a.distance!.compareTo(b.distance!)); // 거리 순으로 정렬
+    return sortedMarkers.toSet(); // 정렬된 마커 Set 반환
+  }
 
-   return markers = sortedMarkers.toSet(); // 정렬된 마커를 다시 Set으로 변환
+
+  static double calculateDistance(LatLng start, LatLng end) {
+    const double earthRadius = 6371000; // 지구 반지름 (미터 단위)
+
+    double dLat = _degreeToRadian((Decimal.parse(end.latitude) - Decimal.parse(start.latitude)).toDouble());
+    double dLon = _degreeToRadian((Decimal.parse(end.longitude) - Decimal.parse(start.longitude)).toDouble());
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degreeToRadian(double.parse(start.latitude))) *
+            cos(_degreeToRadian(double.parse(end.latitude))) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c; // 두 지점 간의 거리 (미터)
+  }
+
+  static int calculateTotalDistance(List<LatLng> coordinates) {
+    double totalDistance = 0.0;
+
+    for (int i = 0; i < coordinates.length - 1; i++) {
+      final LatLng start = coordinates[i];
+      final LatLng end = coordinates[i + 1];
+
+      totalDistance += calculateDistance(start, end); // 두 지점 간 거리 누적
+    }
+
+    return totalDistance.round(); // 총 거리 (미터)
+  }
+
+  static double _degreeToRadian(double degree) {
+    return degree * pi / 180;
   }
 }
 

@@ -106,8 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () async {
-                    if(Get.isRegistered<KakaoMapController>(tag: "kakaoController")) {
-                      await Get.find<KakaoMapController>(tag: "kakaoController").initMethod();
+                    if(Get.isRegistered<KakaoMapController>()) {
+                      await Get.find<KakaoMapController>().initMethod();
                       setState(() {});
                     }
                   },

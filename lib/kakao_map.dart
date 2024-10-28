@@ -44,7 +44,7 @@ class KakaoMap extends StatefulWidget {
 }
 
 class _KakaoMapState extends State<KakaoMap> {
-  late final KakaoMapController _mapController;
+  KakaoMapController? _mapController;
   var userLocation = Get.find<LocationService>();
 
   @override
@@ -61,13 +61,13 @@ class _KakaoMapState extends State<KakaoMap> {
       onWebViewCreated: (InAppWebViewController controller) async {},
       onLoadStop: (InAppWebViewController controller, url) async {
 
-        _mapController = Get.put(KakaoMapController(controller),tag: "kakaoController");
+        _mapController = Get.put(KakaoMapController(controller));
 
         while (_mapController == null) {
-          _mapController = Get.put(KakaoMapController(controller),tag: "kakaoController");
+          _mapController = Get.put(KakaoMapController(controller));
         }
 
-        if (widget.onMapCreated != null) widget.onMapCreated!(_mapController);
+        if (widget.onMapCreated != null) widget.onMapCreated!(_mapController!);
 
         // 페이지 로드 후 appkey 설정
         await controller.evaluateJavascript(source: """
@@ -126,9 +126,11 @@ class _KakaoMapState extends State<KakaoMap> {
   @override
   void didUpdateWidget(KakaoMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _mapController.addPolyline(polylines: widget.polylines);
-    _mapController.addCircle(circles: widget.circles);
-    _mapController.addPolygon(polygons: widget.polygons);
-    _mapController.addMarker(markers: widget.markers);
+    if(_mapController != null) {
+      _mapController?.addPolyline(polylines: widget.polylines);
+      _mapController?.addCircle(circles: widget.circles);
+      _mapController?.addPolygon(polygons: widget.polygons);
+      _mapController?.addMarker(markers: widget.markers);
+    }
   }
 }

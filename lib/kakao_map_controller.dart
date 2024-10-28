@@ -175,7 +175,7 @@ class KakaoMapController extends GetxController {
     // }
 
     if (_test1 != null && _test2 != null && _test4 != null) {
-      fitBounds([_test1, ..._test2, ..._test4]);
+      await fitBounds([_test1, ..._test2, ..._test4]);
     }
   }
 
@@ -305,7 +305,7 @@ class KakaoMapController extends GetxController {
     _webViewController.evaluateJavascript(source: 'clearMarker();');
   }
 
-  fitBounds(List<LatLng> points) async {
+  Future<void> fitBounds(List<LatLng> points) async {
     await _webViewController.evaluateJavascript(
         source: "fitBounds('${jsonEncode(points)}');");
   }

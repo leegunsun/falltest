@@ -24,26 +24,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   KakaoMapController? _kakaoMapController;
-  Worker? _worker;
-
-  @override
-  void initState() {
-    super.initState();
-    _worker = ever<LatLng>(Get.find<LocationService>().userLatLng, (LatLng value) {
-      _set();
-    });
-  }
-
-  void _set() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _worker?.dispose();
-    super.dispose();
-  }
+  // Worker? _worker;
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _worker = ever<LatLng>(Get.find<LocationService>().userLatLng, (LatLng value) {
+  //     _set();
+  //   });
+  // }
+  //
+  // void _set() {
+  //   setState(() {});
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   _worker?.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +51,11 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: [
           KakaoMap(
-            onMapCreated: (KakaoMapController controller) {
+            onMapCreated: (KakaoMapController controller) async {
               _kakaoMapController = controller;
               if(_kakaoMapController != null){
-                _kakaoMapController?.initMethod();
-                setState(() {});
+               await _kakaoMapController?.initMethod();
+               setState(() {});
               }
             },
             onMapTap: (LatLng latLng) async {
@@ -458,7 +458,7 @@ class _HomeState extends State<Home> {
     return list;
   }
 
-  fitBounds(List<LatLng> bounds) async {
-    _kakaoMapController?.fitBounds(bounds);
+  Future<void> fitBounds(List<LatLng> bounds) async {
+    await _kakaoMapController?.fitBounds(bounds);
   }
 }

@@ -72,15 +72,19 @@ class LocationService extends GetxService {
         distanceFilter: 2, // 2미터 단위로 위치 갱신
       ),
     ).listen((Position position) {
-      if(kDebugMode) {
-        print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
-        userLatLng.value = LatLng(defaultLatitude, defaultLongitude);
-        userLatLng.refresh();
-      } else {
-        print('위도: ${position.latitude}, 경도: ${position.longitude}');
-        userLatLng.value = LatLng(position.latitude, position.longitude);
-        userLatLng.refresh();
-      }
+      print('위도: ${position.latitude}, 경도: ${position.longitude}');
+      userLatLng.value = LatLng(position.latitude, position.longitude);
+      userLatLng.refresh();
+
+      // if(kDebugMode) {
+      //   print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
+      //   userLatLng.value = LatLng(defaultLatitude, defaultLongitude);
+      //   userLatLng.refresh();
+      // } else {
+      //   print('위도: ${position.latitude}, 경도: ${position.longitude}');
+      //   userLatLng.value = LatLng(position.latitude, position.longitude);
+      //   userLatLng.refresh();
+      // }
     });
   }
 

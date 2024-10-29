@@ -238,7 +238,7 @@ class _HomeState extends State<Home> {
   Future<void> _selecetStoreMaker(LatLng latLng) async {
     Map<String,dynamic>? _find = _kakaoMapController?.findAllStore
         .firstWhere((Map<String, dynamic> e) =>
-            LatLng(double.parse(e["latLng"]["latitude"]), double.parse(e["latLng"]["longitude"])) == latLng);
+            LatLng(double.parse(e["latLng"]["latitude"]), double.parse(e["latLng"]["longitude"])) == latLng, orElse: () => <String, dynamic>{});
 
     _kakaoMapController?.selectStore = Marker.fromJson(_find ?? {});
 

@@ -20,10 +20,9 @@ void main() async {
   await server.start();
   await dotenv.load();
   await LocalDB.initDatabase();
-  print("1");
+
   await Get.putAsync(() async {
     final locationService = LocationService();
-    print("2");
     await locationService.initService();
 
     return locationService;
@@ -60,6 +59,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final LocationService locationService = Get.find<LocationService>();
+  KakaoMapController? _kakaoMapController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ever(locationService.userLatLng, (_) => setState(() {}));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -113,9 +122,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () async {
-                      if (Get.isRegistered<KakaoMapController>()) {
-                        await Get.find<KakaoMapController>().initMethod();
-                        setState(() {});
+                      if (_kakaoMapController != null) {
+                        await _kakaoMapController?.initMethod();
+                        _kakaoMapController?.webViewController.reload();
                       }
                     },
                     child: Container(
@@ -146,7 +155,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           // Remove padding caused by the status bar
-          body: Home()),
+          body: Home(sendController: (controller) {
+            _kakaoMapController = controller;
+          },)),
     );
   }
 

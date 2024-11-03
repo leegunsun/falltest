@@ -186,7 +186,8 @@ class KakaoMapController extends GetxController {
           circleId: "3",
           center: center,
           radius: 1000,
-          strokeColor: Colors.redAccent,
+          // strokeColor: Colors.blueAccent,
+          strokeColor: const Color(0xff37383B),
           strokeOpacity: 1,
           strokeWidth: 4));
       return center;

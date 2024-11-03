@@ -17,7 +17,8 @@ import 'marker.dart';
 import 'model/lat_lng.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  final void Function(KakaoMapController?) sendController;
+  const Home({Key? key, required this.sendController}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -93,6 +94,7 @@ class _HomeState extends State<Home> {
             onMapCreated: (KakaoMapController controller) async {
               _kakaoMapController = controller;
               if (_kakaoMapController != null) {
+                widget.sendController(_kakaoMapController);
                 await _kakaoMapController?.initMethod();
                 setState(() {});
               }

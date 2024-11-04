@@ -99,7 +99,7 @@ class _HomeState extends State<Home> {
                 setState(() {});
               }
             },
-            onMapTap: (LatLng latLng) async {
+            onMapTap: (customLatLng latLng) async {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
               print("${jsonEncode(latLng)}");
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -108,7 +108,7 @@ class _HomeState extends State<Home> {
                 _scrollToSelectedMarker(_kakaoMapController!.selectStore!);
               }
             },
-            onCameraIdle: (LatLng latLng, int zoomLevel) {
+            onCameraIdle: (customLatLng latLng, int zoomLevel) {
               print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
               print("${jsonEncode(latLng)}");
               print("zoomLevel : $zoomLevel");
@@ -237,14 +237,16 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<void> _selecetStoreMaker(LatLng latLng) async {
+  Future<void> _selecetStoreMaker(customLatLng latLng) async {
     Map<String,dynamic>? _find = _kakaoMapController?.findAllStore
         .firstWhere((Map<String, dynamic> e) =>
-            LatLng(double.parse(e["latLng"]["latitude"]), double.parse(e["latLng"]["longitude"])) == latLng, orElse: () => <String, dynamic>{});
+            customLatLng(double.parse(e["latLng"]["latitude"]), double.parse(e["latLng"]["longitude"])) == latLng, orElse: () => <String, dynamic>{});
+
+    if(_find == null || _find.isEmpty) return;
 
     _kakaoMapController?.selectStore = Marker.fromJson(_find ?? {});
 
-    List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
+    List<customLatLng>? _result = await _kakaoMapController?.findShortCoinNore(
         _kakaoMapController!.userLocation.userLatLng.value,
         latLng,
         _kakaoMapController?.selectStore?.toJson() ?? {});
@@ -269,25 +271,25 @@ class _HomeState extends State<Home> {
     _kakaoMapController?.markers.clear();
   }
 
-  List<LatLng> createOuterBounds() {
+  List<customLatLng> createOuterBounds() {
     double delta = 0.01;
 
-    List<LatLng> list = [];
+    List<customLatLng> list = [];
 
-    list.add(LatLng(90 - delta, -180 + delta));
-    list.add(LatLng(0, -180 + delta));
-    list.add(LatLng(-90 + delta, -180 + delta));
-    list.add(LatLng(-90 + delta, 0));
-    list.add(LatLng(-90 + delta, 180 - delta));
-    list.add(LatLng(0, 180 - delta));
-    list.add(LatLng(90 - delta, 180 - delta));
-    list.add(LatLng(90 - delta, 0));
-    list.add(LatLng(90 - delta, -180 + delta));
+    list.add(customLatLng(90 - delta, -180 + delta));
+    list.add(customLatLng(0, -180 + delta));
+    list.add(customLatLng(-90 + delta, -180 + delta));
+    list.add(customLatLng(-90 + delta, 0));
+    list.add(customLatLng(-90 + delta, 180 - delta));
+    list.add(customLatLng(0, 180 - delta));
+    list.add(customLatLng(90 - delta, 180 - delta));
+    list.add(customLatLng(90 - delta, 0));
+    list.add(customLatLng(90 - delta, -180 + delta));
 
     return list;
   }
 
-  Future<void> fitBounds(List<LatLng> bounds) async {
+  Future<void> fitBounds(List<customLatLng> bounds) async {
     await _kakaoMapController?.fitBounds(bounds);
   }
 }

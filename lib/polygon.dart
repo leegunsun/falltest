@@ -6,8 +6,8 @@ import 'model/lat_lng.dart';
 
 class Polygon extends BaseDraw {
   final String polygonId;
-  final List<LatLng> points;
-  final List<List<LatLng>>? holes;
+  final List<customLatLng> points;
+  final List<List<customLatLng>>? holes;
 
   Polygon({
     required this.polygonId,

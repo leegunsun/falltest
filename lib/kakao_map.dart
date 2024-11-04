@@ -51,9 +51,9 @@ class _KakaoMapState extends State<KakaoMap> {
   Widget build(BuildContext context) {
     return InAppWebView(
       initialUrlRequest: URLRequest(
-        url: WebUri('http://localhost:8080/'),
+        url: WebUri('http://localhost:8080/assets/web/kakaomap.html'),
       ),
-      initialFile: "assets/web/kakaomap.html",
+      // initialFile: "assets/web/kakaomap.html",
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
         // 필요시 다른 설정을 추가하세요.
@@ -85,7 +85,7 @@ class _KakaoMapState extends State<KakaoMap> {
           handlerName: 'onMapTap',
           callback: (args) {
             if (widget.onMapTap != null) {
-              widget.onMapTap!(LatLng.fromJson(jsonDecode(args[0])));
+              widget.onMapTap!(customLatLng.fromJson(jsonDecode(args[0])));
             }
             return null; // JavaScript로 전달할 응답 값 (필요 시)
           },
@@ -110,7 +110,7 @@ class _KakaoMapState extends State<KakaoMap> {
             print("idle ${args[0]}");
             if (widget.onCameraIdle != null) {
               widget.onCameraIdle!(
-                LatLng.fromJson(jsonDecode(args[0])),
+                customLatLng.fromJson(jsonDecode(args[0])),
                 jsonDecode(args[0])['zoomLevel'],
               );
             }

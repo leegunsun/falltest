@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'firebase_options.dart';
@@ -61,12 +62,30 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final LocationService locationService = Get.find<LocationService>();
   KakaoMapController? _kakaoMapController;
+  Worker? _worker;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    ever(locationService.userLatLng, (_) => setState(() {}));
+    _worker = ever(locationService.userLatLng, (_) {
+      _userLocationRef();
+    });
+  }
+
+  Future<void> _userLocationRef () async {
+    if (_kakaoMapController != null) {
+      await _kakaoMapController?.initMethod();
+      _kakaoMapController?.polylines.clear();
+      _kakaoMapController?.webViewController.reload();
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _worker?.dispose();
+    super.dispose();
   }
 
   @override
@@ -124,6 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onTap: () async {
                       if (_kakaoMapController != null) {
                         await _kakaoMapController?.initMethod();
+                        _kakaoMapController?.polylines.clear();
                         _kakaoMapController?.webViewController.reload();
                       }
                     },
@@ -155,9 +175,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           // Remove padding caused by the status bar
+        // body: LocationMapPage(),
           body: Home(sendController: (controller) {
             _kakaoMapController = controller;
-          },)),
+          },)
+      ),
     );
   }
 
@@ -180,5 +202,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ) ??
         false;
+  }
+}
+
+
+
+class LocationMapPage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My Location with Red Dot'),
+      ),
+      body:
+      // Obx(() {
+         GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng( 37.48891558895957, 127.12721264903897),
+            zoom: 15,
+          ),
+          markers: {
+            Marker(
+              markerId: MarkerId('currentLocation'),
+              position:  LatLng( 37.48891558895957, 127.12721264903897),
+              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+            ),
+          },
+        )
+      // }),
+    );
   }
 }

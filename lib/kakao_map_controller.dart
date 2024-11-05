@@ -31,6 +31,7 @@ class KakaoMapController extends GetxController {
   Set<Circle> circles = {};
   Set<Polygon> polygons = {};
   Set<Marker> markers = {};
+  Set<Marker> userMarkers = {};
 
   final usedDio.Dio _dio = usedDio.Dio(usedDio.BaseOptions(
     baseUrl: "https://dapi.kakao.com/v2",
@@ -92,7 +93,7 @@ class KakaoMapController extends GetxController {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getCoinNore(LatLng points,
+  Future<List<Map<String, dynamic>>> getCoinNore(customLatLng points,
       [String? radius]) async {
     usedDio.Response<dynamic> _getData =
         await _dio.get("/local/search/keyword.json", queryParameters: {
@@ -115,7 +116,7 @@ class KakaoMapController extends GetxController {
     return filteredData;
   }
 
-  Future<List<LatLng>> findShortCoinNore(LatLng userPoint, LatLng destinationPoint, Map<String, dynamic> storeData) async {
+  Future<List<customLatLng>> findShortCoinNore(customLatLng userPoint, customLatLng destinationPoint, Map<String, dynamic> storeData) async {
 
     usedDio.Response<dynamic> _getData =
         await _dioTMap.get("/tmap/routes/pedestrian", queryParameters: {
@@ -131,7 +132,7 @@ class KakaoMapController extends GetxController {
     });
 
     // routes -> sections -> roads -> vertexes로 접근하여 좌표 리스트 가져오기
-    List<LatLng> coordinates = [];
+    List<customLatLng> coordinates = [];
 
 
     //   for (var road in _getData.data["routes"][0]["sections"][0]["roads"]) {
@@ -150,7 +151,7 @@ class KakaoMapController extends GetxController {
         for (var point in points) {
           double longitude = point[0];
           double latitude = point[1];
-          coordinates.add(LatLng(latitude, longitude));
+          coordinates.add(customLatLng(latitude, longitude));
         }
       }
     }
@@ -165,11 +166,11 @@ class KakaoMapController extends GetxController {
 
     findAllStore = _result2 ?? [];
 
-    LatLng? _test1 = await _paintCircle();
-    List<LatLng>? _test2 = await _markingStore(_result2);
+    customLatLng? _test1 = await _paintCircle();
+    List<customLatLng>? _test2 = await _markingStore(_result2);
     // LatLng? _test3 = await _3(_result2);
-    List<LatLng>? _test4 = await _paintCloseStore(_result2);
-
+    List<customLatLng>? _test4 = await _paintCloseStore(_result2);
+    // await _markingUser(userLocation.userLatLng.value);
     // if (_test1 != null && _test2 != null && _test3 != null && _test4 != null) {
     //   fitBounds([_test1, ..._test2, _test3, ..._test4]);
     // }
@@ -179,14 +180,15 @@ class KakaoMapController extends GetxController {
     }
   }
 
-  Future<LatLng?> _paintCircle() async {
-    LatLng? center = userLocation.userLatLng.value;
+  Future<customLatLng?> _paintCircle() async {
+    customLatLng? center = userLocation.userLatLng.value;
     if (center != null) {
       circles.add(Circle(
           circleId: "3",
           center: center,
           radius: 1000,
-          strokeColor: Colors.redAccent,
+          // strokeColor: Colors.blueAccent,
+          strokeColor: const Color(0xff37383B),
           strokeOpacity: 1,
           strokeWidth: 4));
       return center;
@@ -194,32 +196,45 @@ class KakaoMapController extends GetxController {
     return null;
   }
 
-  Future<List<LatLng>?> _markingStore(
+  Future<List<customLatLng>?> _markingStore(
       List<Map<String, dynamic>>? _result) async {
     if (_result == null) return null;
 
     for (var item in _result) {
-      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      customLatLng _latlng = customLatLng(double.parse(item["y"]), double.parse(item["x"]));
       // LatLng _latlng = LatLng(37.3625806, 126.9248464);
 
       markers.add(
         Marker(
             markerId: item["id"],
             latLng: _latlng,
-            infoWindowText: item["place_name"],
-            markerImageSrc:
-            'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'),
+            infoWindowText: item["place_name"]),
       );
     }
 
     markers = LocationService.sortMarkersByDistance(
         userLocation.userLatLng.value, markers);
 
-    List<LatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
+    List<customLatLng> bounds2 = markers.map((marker) => marker.latLng).toList();
 
     findAllStore = markers.map((e) => e.toJson()).toList();
 
     return bounds2;
+  }
+
+  Future<void> _markingUser(
+      customLatLng? _userLatLng) async {
+    if (_userLatLng == null) return;
+
+    markers.add(
+        Marker(
+            markerId: "user",
+            latLng: _userLatLng,
+            infoWindowText : 'user',
+            // markerImageSrc:
+            // 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'
+          ),
+      );
   }
 
   // Future<LatLng?> _3(List<Map<String, dynamic>>? _result) async {
@@ -246,12 +261,12 @@ class KakaoMapController extends GetxController {
   //   return closestPoint;
   // }
 
-  Future<List<LatLng>?> _paintCloseStore(
+  Future<List<customLatLng>?> _paintCloseStore(
       List<Map<String, dynamic>>? _result2) async {
     if (_result2 == null) return null;
-    List<LatLng> bounds2 = [];
+    List<customLatLng> bounds2 = [];
     for (var item in _result2) {
-      LatLng _latlng = LatLng(double.parse(item["y"]), double.parse(item["x"]));
+      customLatLng _latlng = customLatLng(double.parse(item["y"]), double.parse(item["x"]));
       // LatLng _latlng = LatLng(37.3625806, 126.9248464);
 
       markers.add(
@@ -265,14 +280,14 @@ class KakaoMapController extends GetxController {
       bounds2.add(_latlng);
     }
 
-    LatLng closestPoint =
+    customLatLng closestPoint =
     LocationService.findClosestPoint(userLocation.userLatLng.value, bounds2);
 
     Map<String, dynamic> _findClosedStore = _result2.firstWhere(
             (Map<String, dynamic> e) =>
-        LatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
+        customLatLng(double.parse(e["y"]), double.parse(e["x"])) == closestPoint);
 
-    List<LatLng>? _result = await findShortCoinNore(
+    List<customLatLng>? _result = await findShortCoinNore(
         userLocation.userLatLng.value, closestPoint, _findClosedStore);
 
     if (_result == null) return null;
@@ -308,7 +323,7 @@ class KakaoMapController extends GetxController {
     _webViewController.evaluateJavascript(source: 'clearMarker();');
   }
 
-  Future<void> fitBounds(List<LatLng> points) async {
+  Future<void> fitBounds(List<customLatLng> points) async {
     await _webViewController.evaluateJavascript(
         source: "fitBounds('${jsonEncode(points)}');");
   }

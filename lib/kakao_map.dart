@@ -44,16 +44,16 @@ class KakaoMap extends StatefulWidget {
 }
 
 class _KakaoMapState extends State<KakaoMap> {
-  KakaoMapController? _mapController;
+  KakaoMapController? mapController;
   var userLocation = Get.find<LocationService>();
 
   @override
   Widget build(BuildContext context) {
     return InAppWebView(
       initialUrlRequest: URLRequest(
-        url: WebUri('http://localhost:8080/'),
+        url: WebUri('http://localhost:8080/assets/web/kakaomap.html'),
       ),
-      initialFile: "assets/web/kakaomap.html",
+      // initialFile: "assets/web/kakaomap.html",
       initialSettings: InAppWebViewSettings(
         javaScriptEnabled: true,
         // 필요시 다른 설정을 추가하세요.
@@ -61,13 +61,13 @@ class _KakaoMapState extends State<KakaoMap> {
       onWebViewCreated: (InAppWebViewController controller) async {},
       onLoadStop: (InAppWebViewController controller, url) async {
 
-        _mapController = Get.put(KakaoMapController(controller));
-
-        while (_mapController == null) {
-          _mapController = Get.put(KakaoMapController(controller));
+        if (!Get.isRegistered<KakaoMapController>()) {
+          mapController = Get.put(KakaoMapController(controller));
+        } else {
+          print("컨트롤러 등록 실패");
         }
 
-        if (widget.onMapCreated != null) widget.onMapCreated!(_mapController!);
+        if (widget.onMapCreated != null) widget.onMapCreated!(mapController!);
 
         // 페이지 로드 후 appkey 설정
         await controller.evaluateJavascript(source: """
@@ -85,7 +85,7 @@ class _KakaoMapState extends State<KakaoMap> {
           handlerName: 'onMapTap',
           callback: (args) {
             if (widget.onMapTap != null) {
-              widget.onMapTap!(LatLng.fromJson(jsonDecode(args[0])));
+              widget.onMapTap!(customLatLng.fromJson(jsonDecode(args[0])));
             }
             return null; // JavaScript로 전달할 응답 값 (필요 시)
           },
@@ -110,7 +110,7 @@ class _KakaoMapState extends State<KakaoMap> {
             print("idle ${args[0]}");
             if (widget.onCameraIdle != null) {
               widget.onCameraIdle!(
-                LatLng.fromJson(jsonDecode(args[0])),
+                customLatLng.fromJson(jsonDecode(args[0])),
                 jsonDecode(args[0])['zoomLevel'],
               );
             }
@@ -126,11 +126,11 @@ class _KakaoMapState extends State<KakaoMap> {
   @override
   void didUpdateWidget(KakaoMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(_mapController != null) {
-      _mapController?.addPolyline(polylines: widget.polylines);
-      _mapController?.addCircle(circles: widget.circles);
-      _mapController?.addPolygon(polygons: widget.polygons);
-      _mapController?.addMarker(markers: widget.markers);
+    if(mapController != null) {
+      mapController?.addPolyline(polylines: widget.polylines);
+      mapController?.addCircle(circles: widget.circles);
+      mapController?.addPolygon(polygons: widget.polygons);
+      mapController?.addMarker(markers: widget.markers);
     }
   }
 }

@@ -46,6 +46,7 @@ dependencies:
   dio: ^5.7.0
   decimal: ^3.0.2
   sqflite: ^2.4.0
+  google_maps_flutter: ^2.9.0
 
 dev_dependencies:
   flutter_test:

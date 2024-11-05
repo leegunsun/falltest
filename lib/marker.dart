@@ -2,7 +2,7 @@ import 'model/lat_lng.dart';
 
 class Marker {
   final String markerId;
-  final LatLng latLng;
+  final customLatLng latLng;
   String? markerImageSrc;
   int? width;
   int? height;
@@ -39,7 +39,7 @@ class Marker {
       Marker(
         markerId: json["id"],
         markerImageSrc: json["markerImageSrc"],
-        latLng: LatLng(double.parse(json["latLng"]["latitude"]), double.parse(json["latLng"]["longitude"])),
+        latLng: customLatLng(double.parse(json["latLng"]["latitude"]), double.parse(json["latLng"]["longitude"])),
         width: json["width"],
         height: json["height"],
         offsetX: null,

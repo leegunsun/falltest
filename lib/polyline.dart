@@ -6,7 +6,7 @@ import 'model/lat_lng.dart';
 
 class Polyline extends BaseDraw {
   final String polylineId;
-  final List<LatLng> points;
+  final List<customLatLng> points;
 
   // Polyline({
   //   required this.polylineId,

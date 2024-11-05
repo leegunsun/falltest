@@ -10,7 +10,7 @@ typedef SetStateCallback = void Function();
 
 //typedef void OnMarkerTab(Marker? marker, Map<String, int?> iconSize);
 
-typedef OnMapTap = void Function(LatLng latLng);
+typedef OnMapTap = void Function(customLatLng latLng);
 
 //typedef void OnMapLongTap(LatLng latLng);
 //
@@ -20,7 +20,7 @@ typedef OnMapTap = void Function(LatLng latLng);
 //
 // typedef void OnCameraChange(LatLng? latLng, CameraChangeReason reason, bool? isAnimated);
 
-typedef OnCameraIdle = void Function(LatLng latLng, int zoomLevel);
+typedef OnCameraIdle = void Function(customLatLng latLng, int zoomLevel);
 
 typedef OnZoomChanged = void Function(int zoomLevel);
 

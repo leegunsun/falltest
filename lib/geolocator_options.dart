@@ -10,7 +10,7 @@ import 'model/lat_lng.dart';
 
 class LocationService extends GetxService {
 
-  Rx<LatLng> userLatLng = LatLng(0, 0).obs;
+  Rx<customLatLng> userLatLng = customLatLng(0, 0).obs;
   final double defaultLatitude = 37.48891558895957;
   // final double defaultLatitude = 37.45194876896246;
   final double defaultLongitude = 127.12721264903897;
@@ -56,8 +56,7 @@ class LocationService extends GetxService {
     //     accuracy: LocationAccuracy.best,
     //   ),
     // );
-    userLatLng.value = LatLng(defaultLatitude, defaultLongitude);
-    userLatLng.refresh();
+
 
     _trackUserLocation();
 
@@ -72,9 +71,18 @@ class LocationService extends GetxService {
         distanceFilter: 2, // 2미터 단위로 위치 갱신
       ),
     ).listen((Position position) {
+
       print('위도: ${position.latitude}, 경도: ${position.longitude}');
-      userLatLng.value = LatLng(position.latitude, position.longitude);
-      userLatLng.refresh();
+
+      if(kDebugMode) {
+        userLatLng.value = customLatLng(defaultLatitude, defaultLongitude);
+        userLatLng.refresh();
+      } else {
+        userLatLng.value = customLatLng(position.latitude, position.longitude);
+        userLatLng.refresh();
+      }
+
+
 
       // if(kDebugMode) {
       //   print('위도: ${defaultLatitude}, 경도: ${defaultLongitude}');
@@ -112,7 +120,7 @@ class LocationService extends GetxService {
 
 
 // 거리 계산 함수
-  static Decimal _calculateDistance(LatLng a, LatLng b) {
+  static Decimal _calculateDistance(customLatLng a, customLatLng b) {
     final latDiff = Decimal.parse(a.latitude.toString()) - Decimal.parse(b.latitude.toString());
     final lonDiff = Decimal.parse(a.longitude.toString()) - Decimal.parse(b.longitude.toString());
 
@@ -128,8 +136,8 @@ class LocationService extends GetxService {
   }
 
 // 가장 가까운 좌표 찾기 함수
-  static LatLng findClosestPoint(LatLng myLocation, List<LatLng> points) {
-    LatLng closestPoint = points[0];
+  static customLatLng findClosestPoint(customLatLng myLocation, List<customLatLng> points) {
+    customLatLng closestPoint = points[0];
     Decimal minDistance = _calculateDistance(myLocation, closestPoint);
 
     for (var point in points) {
@@ -145,7 +153,7 @@ class LocationService extends GetxService {
 
   // 마커 정렬 함수
 // 마커 정렬 함수
-  static Set<Marker> sortMarkersByDistance(LatLng userLocation, Set<Marker> markers) {
+  static Set<Marker> sortMarkersByDistance(customLatLng userLocation, Set<Marker> markers) {
     List<Marker> sortedMarkers = markers.map((marker) {
       int distance = calculateDistance(userLocation, marker.latLng).round();
       return Marker(
@@ -176,7 +184,7 @@ class LocationService extends GetxService {
   }
 
 
-  static double calculateDistance(LatLng start, LatLng end) {
+  static double calculateDistance(customLatLng start, customLatLng end) {
     const double earthRadius = 6371000; // 지구 반지름 (미터 단위)
 
     double dLat = _degreeToRadian((Decimal.parse(end.latitude) - Decimal.parse(start.latitude)).toDouble());
@@ -192,12 +200,12 @@ class LocationService extends GetxService {
     return earthRadius * c; // 두 지점 간의 거리 (미터)
   }
 
-  static int calculateTotalDistance(List<LatLng> coordinates) {
+  static int calculateTotalDistance(List<customLatLng> coordinates) {
     double totalDistance = 0.0;
 
     for (int i = 0; i < coordinates.length - 1; i++) {
-      final LatLng start = coordinates[i];
-      final LatLng end = coordinates[i + 1];
+      final customLatLng start = coordinates[i];
+      final customLatLng end = coordinates[i + 1];
 
       totalDistance += calculateDistance(start, end); // 두 지점 간 거리 누적
     }

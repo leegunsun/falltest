@@ -7,7 +7,7 @@ import 'model/lat_lng.dart';
 
 class Circle extends BaseDraw {
   final String circleId;
-  final LatLng center;
+  final customLatLng center;
   double? radius;
 
   Circle({

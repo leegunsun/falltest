@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dyt/polygon.dart';
 import 'package:dyt/polyline.dart';
+import 'package:dyt/theme/theme_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -184,9 +185,9 @@ class _HomeState extends State<Home> {
                                               child: Row(
                                                 children: [
                                                   if (_isSelect) ...[
-                                                    const Icon(
+                                                    Icon(
                                                       Icons.location_on,
-                                                      color: Colors.blueAccent,
+                                                      color: ThemeColor.primary,
                                                     ),
                                                     const SizedBox(width: 10,)
                                                   ],
@@ -194,7 +195,7 @@ class _HomeState extends State<Home> {
                                                     e.infoWindowText.toString(),
                                                     style: TextStyle(
                                                         color: _isSelect
-                                                            ? Colors.blueAccent
+                                                            ? ThemeColor.primary
                                                             : null,
                                                         fontSize: 18,
                                                         fontWeight: _isSelect
@@ -209,7 +210,7 @@ class _HomeState extends State<Home> {
                                               child: Text("${e.distance.toString()} m",
                                                   style: TextStyle(
                                                       color: _isSelect
-                                                          ? Colors.blueAccent
+                                                          ? ThemeColor.primary
                                                           : null,
                                                       fontSize: 18,
                                                       fontWeight: _isSelect
@@ -240,7 +241,9 @@ class _HomeState extends State<Home> {
         .firstWhere((Map<String, dynamic> e) =>
             LatLng(double.parse(e["latLng"]["latitude"]), double.parse(e["latLng"]["longitude"])) == latLng, orElse: () => <String, dynamic>{});
 
-    _kakaoMapController?.selectStore = Marker.fromJson(_find ?? {});
+    if(_find == null || _find.isEmpty) return;
+
+    _kakaoMapController?.selectStore = Marker.fromJson(_find);
 
     List<LatLng>? _result = await _kakaoMapController?.findShortCoinNore(
         _kakaoMapController!.userLocation.userLatLng.value,
@@ -297,10 +300,14 @@ class OpenMapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: InAppWebView(
-        initialUrlRequest: URLRequest(
-          url: WebUri("https://place.map.kakao.com/$webId"),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        bottom: false,
+        child: InAppWebView(
+          initialUrlRequest: URLRequest(
+            url: WebUri("https://place.map.kakao.com/$webId"),
+          ),
         ),
       ),
     );
